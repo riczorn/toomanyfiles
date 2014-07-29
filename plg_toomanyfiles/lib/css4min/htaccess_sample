@@ -1,0 +1,40 @@
+# This file is part of css4min package by @RiccardoZorn - fasterjoomla.com
+# It performs two tasks:
+# 1- Conditionally serving gzipped versions of the files (if the browser supports it)
+# 2- Setting a far-future expire for the cache, since our cache files never change 
+#   (if they do, so will their names)
+
+# This is copied from the css4min root to the root of the css4min cache as .htaccess. 
+# You do not have apache? Why not? Well just tell your webserver to add "gz" to css and js files
+# served from the cache folder.
+
+# 1. The next lines conditionally serve pre-gzipped files
+# Author: Lee Willis, 2009
+# http://www.leewillis.co.uk/gzip-joomla-tips-faster-website/
+
+# Check to see if browser can accept gzip files.
+ReWriteCond %{HTTP:accept-encoding} (gzip.*)
+
+# make sure there’s no trailing .gz on the url
+ReWriteCond %{REQUEST_FILENAME} !^.+gz$
+
+# check to see if a .gz version of the file exists.
+RewriteCond %{REQUEST_FILENAME}gz -f
+
+# All conditions met so add .gz to URL filename (invisibly)
+RewriteRule ^(.+) $1gz [L]
+AddType “text/css;charset=UTF-8″ .cssgz
+AddEncoding gzip .cssgz
+AddType “text/javascript;charset=UTF-8″ .jsgz
+AddEncoding gzip .jsgz
+
+
+# 2. Leverage browser cache
+<IfModule mod_expires.c>
+ExpiresActive On
+## Add default Expires header
+## http://developer.yahoo.com/performance/rules.html#expires
+<FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|jsgz|css|cssgz|swf)$">
+ExpiresDefault "access plus 1 year"
+</FilesMatch>
+</IfModule>

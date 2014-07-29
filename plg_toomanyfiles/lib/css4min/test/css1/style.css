@@ -1,0 +1,8 @@
+@import url("../style.css");
+@import url("../css/small.css");
+ul.orange, ul {
+    list-style-image: url("../images/bott_red.gif");
+}
+span.orange, span {
+	background-image: url("../images/bott_red.gif");
+}

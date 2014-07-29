@@ -1,0 +1,7 @@
+@CHARSET "UTF-8";
+ul.blue, ul {
+    list-style-image: url("images/bott_blue.gif");
+}
+span.blue, span {
+	background-image: url("images/bott_blue.gif")
+}

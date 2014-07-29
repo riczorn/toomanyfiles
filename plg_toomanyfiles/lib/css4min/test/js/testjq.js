@@ -1,0 +1,1 @@
+jQuery('#testspan1').text('jQuery test 1 ok');

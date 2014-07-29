@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="2.5" type="plugin" group="system" method="upgrade">
+	<name>plg_system_toomanyfiles</name>
+	<author>Riccardo Zorn</author>
+	<creationDate>May 2011</creationDate>
+	<copyright>Copyright (C) 2011-2014 Riccardo Zorn</copyright>
+	<license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>
+	<authorEmail>support@fasterjoomla.com</authorEmail>
+	<authorUrl>www.fasterjoomla.com</authorUrl>
+	<version>1.5.6</version>
+	<description>PLG_SYSTEM_TOOMANYFILES_XML_DESCRIPTION</description>
+	<files>
+		<filename plugin="toomanyfiles">toomanyfiles.php</filename>
+		<filename>index.html</filename>
+		<filename>README.php</filename>
+		<filename>license.txt</filename>
+		<folder>elements</folder>
+		<folder>images</folder>
+		<folder>js</folder>
+		<folder>language</folder>
+		<folder>lib</folder>
+	</files>
+
+	<config>
+		<fields name="params" addfieldpath="/plugins/system/toomanyfiles/elements/">
+			<fieldset name="basic">
+				<field title="PLG_2MANY_INFO_TITLE" header="PLG_2MANY_INFO_HEADER"
+					body="PLG_2MANY_INFO_BODY" footer="PLG_2MANY_INFO_FOOTER"
+					logo="/plugins/system/toomanyfiles/images/logo.png" type="zzinfo" />
+
+				<field name="analytics" type="text" default=""
+					label="PLG_2MANY_FIELD_GA_LABEL" description="PLG_2MANY_FIELD_GA_DESC"
+					filter="string" />
+			</fieldset>
+			<fieldset name="HEADER" label="PLG_2MANY_HEADER">
+				<field name="scripts_position" type="list" default="1"
+					label="PLG_2MANY_FIELD_SCRIPTSPOSITION_LABEL" description="PLG_2MANY_FIELD_SCRIPTSPOSITION_DESC"
+					filter="integer">
+					<option value="0">PLG_2MANY_FIELD_SCRIPTSPOSITION_OPTION_TOP
+					</option>
+					<option value="1">PLG_2MANY_FIELD_SCRIPTSPOSITION_OPTION_BOTTOM
+					</option>
+				</field>
+
+				<field name="scripts_usecompressed" type="list" default="1"
+					label="PLG_2MANY_FIELD_SCRIPTS_USECOMPRESSED_LABEL" description="PLG_2MANY_FIELD_SCRIPTS_USECOMPRESSED_DESC"
+					filter="integer">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field type="spacer" name="scriptsincludelibraries"
+					label="PLG_2MANY_SEPARATOR_INCLUDE_LIBRARIES_LABEL" description="PLG_2MANY_SEPARATOR_INCLUDE_LIBRARIES_DESC" />
+
+				<field name="modernizr" type="list" default="1"
+					label="PLG_2MANY_FIELD_MODERNIZR_LABEL" description="PLG_2MANY_FIELD_MODERNIZR_DESC"
+					filter="integer">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field name="script_mootools_core" type="list" default="0"
+					label="PLG_2MANY_FIELD_MOOTOOLS_CORE_LABEL" description="PLG_2MANY_OPTION_LIBRARIES_DESC"
+					filter="integer">
+					<option value="-1">PLG_2MANY_FIELD_MOOTOOLS_EXTRAS</option>
+					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
+					<option value="1">JTOOLBAR_ENABLE</option>
+				</field>
+
+				<field name="script_mootools_more" type="list" default="0"
+					label="PLG_2MANY_FIELD_MOOTOOLS_MORE_LABEL" description="PLG_2MANY_OPTION_LIBRARIES_DESC"
+					filter="integer">
+					<option value="-1">JTOOLBAR_REMOVE</option>
+					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
+					<option value="1">JTOOLBAR_ENABLE</option>
+				</field>
+
+				<field name="script_jquery" type="list" default="1"
+					label="PLG_2MANY_FIELD_JQUERY_LABEL" description="PLG_2MANY_OPTION_LIBRARIES_DESC"
+					filter="integer">
+					<option value="-1">JTOOLBAR_REMOVE</option>
+					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
+					<option value="1">JTOOLBAR_ENABLE</option>
+				</field>
+
+				<field name="script_jquery_ui" type="list" default="0"
+					label="PLG_2MANY_FIELD_JQUERY_UI_LABEL" description="PLG_2MANY_OPTION_LIBRARIES_DESC"
+					filter="integer">
+					<option value="-1">JTOOLBAR_REMOVE</option>
+					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
+					<option value="1">JTOOLBAR_ENABLE</option>
+				</field>
+				
+			</fieldset>
+			<fieldset name="advanced">
+
+				<field type="spacer" name="compression"
+					label="PLG_2MANY_SEPARATOR_COMPRESSION_LABEL" />
+
+				<field name="compress_js" type="list" default="0"
+					label="PLG_2MANY_FIELD_COMPRESS_JS_LABEL" description="PLG_2MANY_FIELD_COMPRESS_JS_DESC"
+					filter="integer">
+					<option value="0">JNO</option>
+					<option value="1">PLG_2MANY_FIELD_COMPRESS_JS_OPTION_1_BASIC
+					</option>
+					<option value="2">PLG_2MANY_FIELD_COMPRESS_JS_OPTION_2_PACKER
+					</option>
+					<option value="3">PLG_2MANY_FIELD_COMPRESS_JS_OPTION_3_ROCKJOCK
+					</option>
+					<option value="4">PLG_2MANY_FIELD_COMPRESS_JS_OPTION_4_PADOSLEY
+					</option>
+				</field>
+
+				<field name="compress_css" type="list" default="1"
+					label="PLG_2MANY_FIELD_COMPRESS_CSS_LABEL" description="PLG_2MANY_FIELD_COMPRESS_CSS_DESC"
+					filter="integer">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field name="compress_remove_comments" type="list" default="1"
+					label="PLG_2MANY_FIELD_COMPRESS_REMOVE_COMMENTS_LABEL" description="PLG_2MANY_FIELD_COMPRESS_REMOVE_COMMENTS_DESC"
+					filter="integer">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field name="debug_level" type="list" default="0"
+					label="PLG_2MANY_FIELD_DEBUG_LEVEL_LABEL" description="PLG_2MANY_FIELD_DEBUG_LEVEL_DESC"
+					filter="integer">
+					<option value="0">PLG_2MANY_FIELD_DEBUG_LEVEL_NODEBUG</option>
+					<option value="2">PLG_2MANY_FIELD_DEBUG_LEVEL_BASIC</option>
+					<option value="5">PLG_2MANY_FIELD_DEBUG_LEVEL_VERBOSE</option>
+				</field>
+
+				<field type="spacer" name="excludex" label="&lt;/li&gt;&lt;/ul&gt;" />
+				
+				<field type="spacer" name="exclude"
+					label="PLG_2MANY_SEPARATOR_EXCLUSION_LABEL" />
+
+				<field name="enabled_users" type="list" default="guests"
+					label="PLG_2MANY_FIELD_ENABLED_USERS_LABEL" description="PLG_2MANY_FIELD_ENABLED_USERS_DESC"
+					filter="cmd">
+					<option value="guests">PLG_2MANY_FIELD_ENABLED_USERS_GUESTS</option>
+					<option value="guests_reg">PLG_2MANY_FIELD_ENABLED_USERS_GUESTS_REGISTERED</option>
+					<option value="guests_reg_admin">PLG_2MANY_FIELD_ENABLED_USERS_ALL</option>
+					<option value="admin">PLG_2MANY_FIELD_ENABLED_USERS_ADMINS</option>
+				</field>
+				
+				<!-- field name="script_mootools_enabled_logged_in" type="list" default="0"
+					label="PLG_2MANY_FIELD_MOOTOOLS_ENABLED_LOGGEDIN" description="PLG_2MANY_FIELD_MOOTOOLS_EXTRAS_DESC"
+					filter="integer">
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field> -->
+
+				<!-- field name="script_mootools_jcaption" type="list" default="-1"
+					label="PLG_2MANY_FIELD_MOOTOOLS_EXTRAS_JCAPTION" description="PLG_2MANY_FIELD_MOOTOOLS_EXTRAS_DESC"
+					filter="integer">
+					<option value="-1">JTOOLBAR_REMOVE</option>
+					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
+				</field>
+				<field name="script_mootools_jtooltip" type="list" default="0"
+					label="PLG_2MANY_FIELD_MOOTOOLS_EXTRAS_JTOOLTIP" description="PLG_2MANY_FIELD_MOOTOOLS_EXTRAS_DESC"
+					filter="integer">
+					<option value="-1">JTOOLBAR_REMOVE</option>
+					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
+				</field>
+				<field name="script_mootools_keepalive" type="list" default="0"
+					label="PLG_2MANY_FIELD_MOOTOOLS_EXTRAS_KEEPALIVE" description="PLG_2MANY_FIELD_MOOTOOLS_EXTRAS_DESC"
+					filter="integer">
+					<option value="-1">JTOOLBAR_REMOVE</option>
+					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
+				</field-->
+				
+				<field name="compress_remove_comments" type="list" default="1"
+					label="PLG_2MANY_FIELD_COMPRESS_REMOVE_COMMENTS_LABEL" description="PLG_2MANY_FIELD_COMPRESS_REMOVE_COMMENTS_DESC"
+					filter="integer">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				
+				
+				<field name="exclude_components" type="textarea" default=""
+					label="PLG_2MANY_FIELD_COMPRESS_EXCLUDE_COMPONENTS_LABEL"
+					description="PLG_2MANY_FIELD_COMPRESS_EXCLUDE_COMPONENTS_DESC"
+					rows="4" cols="40" />
+
+				<field name="exclude_pages" type="textarea" default=""
+					label="PLG_2MANY_FIELD_COMPRESS_EXCLUDE_PAGES_LABEL"
+					description="PLG_2MANY_FIELD_COMPRESS_EXCLUDE_PAGES_DESC"
+					rows="4" cols="40" />
+
+
+				<field name="exclude_files" type="textarea" default=""
+					label="PLG_2MANY_FIELD_COMPRESS_EXCLUDE_FILES_LABEL" description="PLG_2MANY_FIELD_COMPRESS_EXCLUDE_FILES_DESC"
+					rows="4" cols="40" />
+
+			</fieldset>
+
+		</fields>
+	</config>
+	<updateservers>
+		<!-- Note: No spaces or linebreaks allowed between the server tags -->
+		<server type="extension" priority="1" name="TooManyFiles Update Site">http://www.fasterjoomla.com/index.php?option=com_ars&amp;view=update&amp;task=stream&amp;format=xml&amp;id=1&amp;dummy=toomanyfiles.xml</server>
+	</updateservers>
+</extension>
