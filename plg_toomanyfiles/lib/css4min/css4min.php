@@ -9,7 +9,8 @@
  * @license GNU/GPL v2 or greater http://www.gnu.org/licenses/gpl-2.0.html
  *
  * This class has the purpose of reducing the number of requests a webpage makes.
- * This is accomplished by joining (putting together) all css files and js files, then minifying and compressing.
+ * This is accomplished by joining (putting together) all css files and js files, 
+ * then minifying and compressing.
  * A cache system with pre-compressed gzipped files ensures maximum performance.
  * 
  * Although this class is intended for use with Joomla by the plugin toomanyfiles, 
@@ -18,6 +19,25 @@
  *
  * The headers are set so that the browser cache never expires; every time a new version is cached
  * its URI changes.
+ * 
+ * PRO Version June 2014
+ * =====================
+ * This library optionally allows for complete configuration performed by the component 
+ * Too Many Files Pro.
+ * The configuration consists of two options: use_pro and resource_package.
+ * If set, a totally different approach is followed when compressing the files.
+ * 
+ * Instead of compressing the files that are found on every page, it uses a pre-defined 
+ * "package" which contains user-picked scripts and libraries. 
+ * Everytime a library is requested, which is contained in the "package", the
+ * full package is served. Everytime an extra library is requested, the default behaviour applies.
+ * 
+ *   By using the Pro component you select the heavy libraries that - even compressed - 
+ *   take up valuable user time, which are used commonly throughout the site.
+ *   Combining them in a single package saves precious time and resources, not only by 
+ *   compressing once and downloading on all pages, but also on not needing to check
+ *   their last modified time at every page load (resulting in several fewer reads from disk
+ *   and possibly a few ms saved depending on hosting.
  *
  */
 defined('_JEXEC') or die();
@@ -78,13 +98,6 @@ defined('_JEXEC') or die();
  * RockJock http://razorsharpcode.blogspot.it/2010/02/lightweight-javascript-and-css.html 
  */
 
-/**
- * 0.1 2012/06/21 (first day of summer)
- * 		Missing:
- * 			proper error and debug formatting before/after the head and footer are output.
- */
-
-
 //defined('DS') || define('DS',DIRECTORY_SEPARATOR); // make things easier if you're not using joomla!
 defined('DS') || define('DS',"/"); // make things easier if you're not using joomla!
 
@@ -115,6 +128,10 @@ class Css4Min {
 	var $arraykeys = array('scripts','styleSheets');
 	var $errorCount;
 	var $excludeFiles=array(); // files which should be skipped when inlining
+	
+	var $pro=false;
+	var $resource_package;
+	
 	
 	function Css4Min() {
 		$this->message = "";
@@ -190,7 +207,7 @@ class Css4Min {
 			$files = explode(",",$files);
 		}
 		else if (!is_array ($files)) {
-			$this->error("wrong params type: ".$files);
+			$this->error("Wrong params type: ".$files);
 			return false;
 		}
 			
@@ -199,7 +216,7 @@ class Css4Min {
 			unset($this->files);
 			return false;
 		} else {
-			// i received an array, but I don't know if it's a joomla array or a file-only array: 
+			// I received an array, but I don't know if it's a joomla array or a file-only array: 
 			// so first of all I'll transform it
 			if (array_key_exists('scripts',$files) || array_key_exists('script',$files) || array_key_exists('styleSheets',$files)) {
 				// this is already in joomla format
@@ -218,7 +235,8 @@ class Css4Min {
 						$file = str_replace($this->siteurl,"",$file);
 						// remove ?random=11; but only on local file inclusion: not on remote scripts which may need params.
 						//error_log('addFiles '.$file);
-						if ((($querypos = strpos($file,'?'))>0) && (strpos($file,'//') === false) && (strpos($file,'.php') === false)) {
+						if ((($querypos = strpos($file,'?'))>0) // the file has a query string i.e. ?random=42  
+							&& ($this->isLocalAndStatic($file)) ) {
 							$oldfile = $file;
 							$file = substr($file,0,$querypos);
 							if ($this->isdebug>1) {error_log('--FIXED addFiles '.$file);}
@@ -231,7 +249,7 @@ class Css4Min {
 								array_slice($thisArray, $index, count($thisArray)-$index, true);
 							$this->files[$arraykey] = $thisArray;
 						}
-						if ($this->isLocal($file) ) {
+						if ($this->isLocalAndStatic($file) ) {
 							$fileName = $this->wwwroot.'/'.ltrim($file,'/');
 							// let's exclude php-generating css and js scripts
 							if ($i = strpos($fileName,'?')>0) {
@@ -292,9 +310,11 @@ class Css4Min {
 				$file = str_replace($this->siteurl,"",$file);
 				$file = preg_replace("/(\\?.*)$/","",$file);
 						
-				if ($this->isLocal($file)) {
-					$allPaths .= $file;
-					$lastModified = max($lastModified, filemtime($this->wwwroot . DS . $file));
+				if ($this->isLocalAndStatic($file)) {
+					if (!$this->isExcluded($file)) {
+						$allPaths .= $file;
+						$lastModified = max($lastModified, filemtime($this->wwwroot . DS . $file));
+					}
 				}
 			}
 		}
@@ -305,7 +325,7 @@ class Css4Min {
 		$cachefilename = $lastModified . '-' . md5($allPaths) . "$suffix.$ext";
 		if ($arraykey=='scripts') {
 			$this->cachenamejs = $cachefilename;
-		} else {
+		} else  {
 			$this->cachenamecss = $cachefilename;
 		} 
 		return $cachefilename;
@@ -341,14 +361,43 @@ class Css4Min {
 	}
 	
 	/**
-	 * Function isLocal: returns true if the file is local i.e. does not contain a protocol or the site url is local.
+	 * Function isLocalAndStatic: returns true if the file is local i.e. does not contain a protocol or the site url is local.
 	 */
-	function isLocal($file) {
+	function isLocalAndStatic($file) {
 		// be careful here, "//ajax.googleapis.com" is possible so don't check for true
-		$isLocal = ((strpos($file,"//")===false) || (!empty($this->siteurl) && (strpos($file,$this->siteurl)!==false) ));
+		$isLocal = 
+			(
+					// not remote for sure:
+				(strpos($file,"//")===false) 
+			|| 
+					// not local file with domain name prepended 
+				(!empty($this->siteurl) 
+						&& (strpos($file,$this->siteurl)!==false) 
+				)
+			);
 		if ($isLocal) {
+			// let's exclude scripts too:
+			// scripts must contain php 
 			if (strpos($file,'.php')>0) {
 				$isLocal = false;
+			}
+			// or - but we're including this just in case of really really nasty coders 
+			// componentpath/something/? invoking an index.php in
+			// a subfolder of the component (i.e. cobalt was the one to pass this wonderful test!)
+			if (strpos($file, '/?')>0) {
+				$isLocal = false;
+			}
+			// there could be a further exception: where ? is added to a folder... do we really 
+			// want to waste precious processing time testing for this?
+			if ($querypos = strpos($file, '?')>0) {
+				$file = JPATH_BASE . '/' . substr($file, 0, $querypos);
+				if (file_exists($file)) {
+					// now let's check that it's not a folder
+					if (!is_file($file)) {
+						// most likely it's a folder.
+						$isLocal = false;
+					}
+				}
 			}
 		}
 		return $isLocal;
@@ -362,7 +411,7 @@ class Css4Min {
 		$itemCount = 0;
 		if (isset($this->files[$arraykey])) {
 			foreach ($this->files[$arraykey] as $file=>$options) {
-				if ($this->isLocal($file))
+				if ($this->isLocalAndStatic($file))
 					$itemCount++;
 			}
 		}
@@ -415,25 +464,66 @@ class Css4Min {
 		return $tags;
 	}
 	
+	/**
+	 * Create cache files for the pro package (removing the files therein),
+	 * then proceed to creating cache files for the scripts and stylesheets.
+	 */
 	protected function createCacheFiles() {
+		$this->createProPackage();
 		if ($this->processJS)
 			if ($this->countItems('scripts'))
 				$this->createCacheFile('scripts');
 		if ($this->processCSS)
 			if ($this->countItems('styleSheets'))
 				$this->createCacheFile('styleSheets');
-				
+	}
+	
+	/**
+	 * remove files that are already in the package
+	 * insert the package in place of the first instance
+	 *  oPTION: BUT NOT NECESSARY:
+	 * compress the package by creating two extra keys: scriptsMain and styleSheetsMain 
+	 * where Main = group name, in the future we may support multiple package groups.
+	 * No in realtà forse c'è un modo migliore. Staccare la compressione dalla struttura.
+	 * Cioè passare i due array alla compressione, senza che la compressione debba preoccuparsi
+	 * di cosa si tratta!
+	 * 
+	 */
+	static $package_added=false;
+	protected function createProPackage() {
+		if ($this->pro) {
+			/*
+			 * TODO This is the main part missing.
+			 */
+			$this->packageToGroups();// add the new keys based on the group;
+			// @ TODO copy package files to a proper structure and create the cachefiles
+			//$this->stripFilesInPackage(); 
+		}
+	}
+	
+	protected function packageToGroups() {
+		if (!empty($this->resource_package)) {
+			foreach($this->resource_package as $group=>$package) {
+				$g = new stdClass();
+				$g->used = false;
+				$g->compressedStyles = ''; // the filename of the compressed file
+				$g->compressedScripts = ''; 
+				$this->groups[$group] = $g;
+			}
+		}
 	}
 	
 	/**
 	 * Parses the files list and if files are local, 
 	 * - remove them from the list 
 	 * - compress/minify them.
-	 * - add to the list the reference to the compressed version
+	 * - add to the list the filename of the compressed version
 	 */
 	protected function createCacheFile($arraykey) {
 		//$this->debug( "<h4>Create cache file ($arraykey): ".count($this->files['styleSheets'])." styles/".count($this->files['scripts'])." scripts </h4>");
 		$cachepath = $this->getCacheFilePath($arraykey);
+		$cachefile = $this->getCacheFileURI($arraykey);
+		$files = $this->files[$arraykey];
 		//$this->debug( "createCacheFile $arraykey: $cachepath");
 		$dir = dirname($cachepath);
 		// initialize the cache folder:
@@ -454,20 +544,22 @@ class Css4Min {
 		if (file_exists($cachepath)) {
 			$itemCount = 0;
 			foreach($this->files[$arraykey] as $file=>$options) {
-				if ($this->isLocal($file)) {
-					unset($this->files[$arraykey][$file]);
+				if ($this->isLocalAndStatic($file)) {
+					if (!$this->isExcluded($file)) {
+						unset($this->files[$arraykey][$file]);
+					}
 				}
 			}
-			$this->addFile($this->getCacheFileURI($arraykey));
+			$this->addFile($cachefile);
 		} else {
 			// we need to create the file:
 			Minifier::URIRewriterInit();
-			$this->buffer = "";
+			$this->initBuffer();
 
 			
 			foreach($this->files[$arraykey] as $file=>$options) {
 				// this is the main processing function
-				if ($this->isLocal($file)) {
+				if ($this->isLocalAndStatic($file)) {
 					if (!$this->isExcluded($file)) {
 						if ($this->addToBuffer($file)) { // krz here add the media,screen,print keys
 							unset($this->files[$arraykey][$file]);
@@ -487,7 +579,7 @@ class Css4Min {
 				
 			// will return false also on empty buffer
 			if ($this->saveBuffer($arraykey)) {
-				$this->addFile($this->getCacheFileURI($arraykey));
+				$this->addFile($cachefile);
 			} 
 		}
 		//$this->debug( "<h5>//Create cache file: ".count($this->files['styleSheets'])." styles/".count($this->files['scripts'])." scripts </h5>");
@@ -514,7 +606,7 @@ class Css4Min {
 		$file = str_replace($this->siteurl,"",$file);
 		// if the url contains "//" - and it's not the local siteurl because we replaced it in addFiles
 		
-		if (!$this->isLocal($file)) {
+		if (!$this->isLocalAndStatic($file)) {
 			$this->debug ("Css4Min Will not inline remote resource: $file (siteurl:".$this->siteurl.")");
 			return false;
 		} 
@@ -543,6 +635,11 @@ class Css4Min {
 					return true;
 				}
 		}
+		// let's make sure the file is not in the cache already:
+		if (strpos($file,$this->cachedir)!==false) {
+			return true;
+		}
+			
 		return false;
 	}
 	

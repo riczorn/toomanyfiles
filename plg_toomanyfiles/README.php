@@ -51,16 +51,20 @@ Version 1.4.2 (2014-02-21) beta
 Version 1.5.0 (2014-02-22) beta
 	New: Removing JComments, JTooltip, keepAlive removes both the libraries and the scripts, so you don't get errors.  
 	If mootools Core is removed, these will be all removed since they can't work without it.
-	
+
+Version 1.5.5 (2014-03-05) production
+	published on the JED
+
+Version 1.5.6 (2014-05-31) production
+	Improved support for IE conditional comments.
 ---------------------------------------	
 
+As of June, 2014 the plugin Too Many Files has been improved to support
+a smarter compression with the new Pro component "Too Many Files Pro".
+This currently does not affect existing features.
 
-Roadmap for the future v.2
-  - Write a component that 
-	  - wgets the site and proposes the complete list of javascript and css files.
-	  - the user chooses which to include in the "main" package;
-  	  - update the plugin to serve the "main" package anytime any of the libraries included is requested.
-  (This is a major update, will cost some time, but is the only way to be really really effective).
-  - use the plugin as in v.1 to serve the delta files: those which are not included in the "main" package can still be served by toomanyfiles.
-  
-  
+In an ongoing effort to keep things as simple as possible for the user,
+the "Too Many Files Pro" scans your site and gathers most of the information 
+that is necessary for the configuration, thus making it easier for it to work
+with no configuration at all.
+

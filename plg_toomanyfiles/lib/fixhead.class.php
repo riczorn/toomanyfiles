@@ -2,7 +2,7 @@
 /**
  * fixHead is a class that helps sort and compact your css and js declarations.
  * 
- * it has been developed as part of the Joomla! system plugin toomanyfiles
+ * it is part of the Joomla! system plugin toomanyfiles
  * 
  * @package toomanyfiles.fixhead
  * @author Riccardo Zorn support@fasterjoomla.com
@@ -502,6 +502,12 @@ class FixHead {
 		$css4Min->siteurl = JURI::base(false);
 		$css4Min->processJS=$this->params->get('compress_js');
 		$css4Min->processCSS=$this->params->get('compress_css');
+		//Pro version
+		$css4Min->pro=$this->params->get('use_pro') && file_exists(JPATH_ADMINISTRATOR.'/components/com_toomanyfiles/controllers/toomanyfiles.php');
+		if ($css4Min->pro) {
+			$css4Min->resource_package=json_decode($this->params->get('resource_package'));
+		}
+		
 		$css4Min->removeComments=$this->params->get('compress_remove_comments') &&
 				!JDEBUG; // always leave comments if we're in Joomla debug mode
 		if (JDEBUG) {
@@ -545,7 +551,7 @@ class FixHead {
 		 * And inside the code I simply check if there is a first match, in which case 
 		 * I know it's a conditional comment and ignore the line.
 		 * 
-		 * //@TODO: It may only match single-scripts. If a conditional comment includes
+		 * TODO: It may only match single-scripts. If a conditional comment includes
 		 * 			more than one line, it won't be matched.
 		 */
 		$expressions = array(

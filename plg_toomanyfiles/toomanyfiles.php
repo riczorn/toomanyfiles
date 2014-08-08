@@ -127,8 +127,13 @@ class plgSystemTooManyFiles extends JPlugin
 	    	if (!empty($excl) && $Itemid==$excl) {
 	    		return false;
 	    	}
-	    }	    
-	    
-		return true;
+	    }
+
+	    // special flag passed by the component toomanyfiles:
+	    $noCompress = JRequest::getInt('nocompress',0);
+	    if ($noCompress) {
+	    	return false;
+	    }
+	    return true;
 	}
 }

@@ -7,7 +7,7 @@
 	<license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>
 	<authorEmail>support@fasterjoomla.com</authorEmail>
 	<authorUrl>www.fasterjoomla.com</authorUrl>
-	<version>1.5.6</version>
+	<version>1.5.7</version>
 	<description>PLG_SYSTEM_TOOMANYFILES_XML_DESCRIPTION</description>
 	<files>
 		<filename plugin="toomanyfiles">toomanyfiles.php</filename>
@@ -194,6 +194,18 @@
 
 				<field name="exclude_files" type="textarea" default=""
 					label="PLG_2MANY_FIELD_COMPRESS_EXCLUDE_FILES_LABEL" description="PLG_2MANY_FIELD_COMPRESS_EXCLUDE_FILES_DESC"
+					rows="4" cols="40" />
+
+				<field name="use_pro" type="list" default="0"
+					label="PLG_2MANY_FIELD_USE_PRO_CONFIG"
+					description="PLG_2MANY_FIELD_USE_PRO_CONFIG_DESC"
+					filter="integer">
+					<option value="0">JNo</option>
+					<option value="1">PLG_2MANY_OPTION_USE_PRO_CONFIG_YES</option>
+				</field>
+
+				<field name="resource_package" type="hidden" default=""
+					label="PLG_2MANY_FIELD_COMPRESS_FORCE_SCRIPT_ORDER" description="PLG_2MANY_FIELD_COMPRESS_FORCE_SCRIPT_ORDER_DESC"
 					rows="4" cols="40" />
 
 			</fieldset>
