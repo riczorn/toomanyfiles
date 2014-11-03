@@ -9,18 +9,20 @@ newversion=$1
 
 echo VERSION=$newversion >> configpro.inc
 
+source configpro.inc
+
 if [ "a$2" != "a" ]; then 
   # $2 is the comment of this version
   # echo -e = enable backslash interpretation
   echo -e "`date +%Y-%m-%d` $newversion\t$2" >> news.inc
 fi 
 
-extension="toomanyfiles pro"
+extension="toomanyfiles_pro"
 
 echo Compressione di $extension $newversion. Rimuovo precedente versione
 
 
-cd /cygdrive/e/DeV/Joomla/TooManyFiles/com_toomanyfiles_pro
+cd $destdir
 
 # File di installazione pacchetto:
 grep -rl -P "<version>.*</version>" . | grep "xml" | xargs sed -i -e "s@<version>.*</version>@<version>$newversion</version>@"
@@ -30,7 +32,8 @@ echo "<version>$newversion</version> Aggiornata."
 echo Create zips for: 
 echo - pro component
 zipped="${extension}_$newversion.zip"
-zip -9 -r $zipped $extension 
+cd ..
+zip -9 -r $zipped com_$extension 
 echo ... ok
 
 echo Compression done. Now upload

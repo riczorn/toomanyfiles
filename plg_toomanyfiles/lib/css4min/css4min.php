@@ -534,9 +534,15 @@ class Css4Min {
 			}
 			// since the folder wasn't there, let's copy the .htaccess and index.html
 			//and copy the .htaccess if it's not there:
-			if (!copy(dirname(__FILE__).DS.'htaccess_sample',dirname($cachepath)."/.htaccess")) {
-					$this->error('Cannot copy '.dirname(__FILE__).DS.'htaccess_sample to '.dirname($cachepath)."/.htaccess");
-				}
+			
+// 			2014/10/28: admintools writes an incompatible .htaccess that conflicts with ours.
+// 				this is a seriuos issue, as our .htaccess contains instructions that 
+// 				tell browsers to grab the compressed files, and breaks the 
+// 				layout if it's not there;
+						
+// 			if (!copy(dirname(__FILE__).DS.'htaccess_sample',dirname($cachepath)."/.htaccess")) {
+// 					$this->error('Cannot copy '.dirname(__FILE__).DS.'htaccess_sample to '.dirname($cachepath)."/.htaccess");
+// 				}
 			file_put_contents(dirname($cachepath)."/index.html", "<!doctype html>");
 		}
 		
