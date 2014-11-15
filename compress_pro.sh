@@ -17,7 +17,6 @@ if [ "a$2" != "a" ]; then
   echo -e "`date +%Y-%m-%d` $newversion\t$2" >> news.inc
 fi 
 
-extension="toomanyfiles_pro"
 
 echo Compressione di $extension $newversion. Rimuovo precedente versione
 
