@@ -10,6 +10,7 @@
  *  - File
  *  	- js/jquery.1.10.3.min.js
  *  	- js/jquery.2.1.0.min.js
+ *  - a custom element if appropriate;
  *  
  *  The user may specify an alternate local or remote version for each library.
  *
@@ -62,26 +63,21 @@ class JFormFieldZzlibrary extends JFormFieldGroupedList
     				$("#'.$inputid.'").change(function() {
     					'.$inputid.'_changed(this.value);
     			
-    					// now let\'s update the select with the new selector.
-    					// we additionally need to update the markup of the chosen - chzn
-    					// graphical replacement for the select;
+    					// now let\'s update the select\'s custom option or create a new custom option;
     					customSelector = "#'.$selectid.' .' .$this->cssClass . '";
     					$customOption = jQuery(customSelector);
     					if ($customOption.length==0) { 
     						// create a custom option to hold the edited uri
     						jQuery("#'.$selectid.'").append("<option value=\"1\" class=\"' . 
-    							$this->cssClass . '\">CustomA</option>");
+    							$this->cssClass . '\">loading...</option>");
     						$customOption = jQuery(customSelector);
     					}
     					$customOption.val(this.value);
     					jQuery("#'.$selectid.'").val(this.value);
-    					$customOption.text("Customf: "+ this.value);
+    					$customOption.text(this.value);
     					$customOption.attr("selected","selected");
-    					// now remove and recreate the markup for the nice dropdown
-    					jQuery("#'.$selectid.'_chzn").hide("slow");
-    					// recreate doesn\'t quite work!!!! Nor can I find an update event.
-    					// jQuery("#'.$selectid.'").chosen({"disable_search_threshold":10,"allow_single_deselect":true,"placeholder_text_multiple":"Select some options","placeholder_text_single":"Select an option","no_results_text":"No results match"});
-    					// console.log("2:"+$customOption.val());					
+    					// now update the chosen markup for the nice dropdown
+    					jQuery("#'.$selectid.'").trigger("liszt:updated");			
     				});
     			
     				// when selecting a different option from the dropdown
@@ -99,7 +95,6 @@ class JFormFieldZzlibrary extends JFormFieldGroupedList
     	$href=$this->value;
     	$hidden = in_array($href, array("-1","0","1"))?'hidden':'';
 		return "<div class='zzlibrary $class'>
-				<!--h3>$title</h3-->
 				<div class='body'>$body</div> 
 				<div class='test $hidden' id='container_$inputid'>
 					<input type='text' id='$inputid' value='$href' />

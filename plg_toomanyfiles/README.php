@@ -1,7 +1,7 @@
 <?php
 die();
 /**
- * @package     Too Many Files
+ * @package     Too Many Files plugin
  * @copyright   Copyright (C) 2012-2014 Riccardo Zorn. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  * @author      Riccardo Zorn <support@tmg.it> - http://www.fasterjoomla.com/too-many-files-optimize-your-site-js-and-css
@@ -73,8 +73,13 @@ Version 1.5.11 (2014-11-11)
 	Improved reliability and compatibility with other extensions
 	most notably excluded the creation of the custom 
 	.htaccess in the css4min cache folder to prevent 
-	incompatibilities with admin tools.
+	incompatibilities with Admin Tools by Akeeba.
 	
-Version 1.6.01 (2014-12-02)
+Version 1.6.1 (2014-12-02)
 	Added extra configuration params to specify the exact version and source of libraries
-
+	The configuration is backwards compatible: i.e. your previous settings will continue
+	to work; however, once you open the plugin the old configuration options will be changed and
+	you'll have to choose an explicit library.  Once you have made your choice, toomanyfiles
+	will not automatically change library version when it updates.
+	This ensures you can use jQuery 1 or 2 in the exact version you tested for.
+	
