@@ -66,5 +66,15 @@ This currently does not affect existing features.
 In an ongoing effort to keep things as simple as possible for the user,
 the "Too Many Files Pro" scans your site and gathers most of the information 
 that is necessary for the configuration, thus making it easier for it to work
-with no configuration at all.
+with no manual configuration at all, and to ease testing of custom configurations.
+
+
+Version 1.5.11 (2014-11-11)
+	Improved reliability and compatibility with other extensions
+	most notably excluded the creation of the custom 
+	.htaccess in the css4min cache folder to prevent 
+	incompatibilities with admin tools.
+	
+Version 1.6.01 (2014-12-02)
+	Added extra configuration params to specify the exact version and source of libraries
 

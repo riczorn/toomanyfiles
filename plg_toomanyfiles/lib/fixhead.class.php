@@ -50,10 +50,10 @@ class FixHead {
 		$user = JFactory::getUser();
 		$this->isGuest = ($user->guest);
 		
-		$jqversion = '1.10.2';
-		$jquiversion = '1.10.4';
+		$jqversion = '1.11.1';
+		$jquiversion = '1.11.2';
 		$mootoolsver = '1.4.5';
-		$modernizrver = '2.5.3';
+		$modernizrver = '2.8.3';
 		
 		$plugindir = "/plugins/system/toomanyfiles";
 		
@@ -292,19 +292,28 @@ class FixHead {
 	function fixHeadLibrary($scriptLibrary) {
 		if (!empty($this->scriptLibraries[$scriptLibrary])) {
 			$lib = $this->scriptLibraries[$scriptLibrary];
-			$option = 0 +  $this->params->get('script_'.$scriptLibrary);
+			$option = $this->params->get('script_'.$scriptLibrary);
 			switch ($option) {
-				case 0: break; // leave as is
-				case -1: {
+				case '0': break; // leave as is
+				case '-1': {
 					// remove it from $this->head;
 					$this->removeLibrary($this->head, $scriptLibrary);
 					break;
 				}
-				case 1: {
+				case '1': {
 					// enable it: hence remove it and add it at the top of $this->head or $this->foot as appropriate;
 					$this->removeLibrary($this->head,	$scriptLibrary);
 					$this->addLibrary($this->head,	$scriptLibrary);
 					break;
+				}
+				default: {
+					// new in v.1.6: enable it but use the value of option!
+					$this->removeLibrary($this->head, $scriptLibrary);
+					// there are several cases for option: absolute path, cdn; 
+					// relative path is not expected and should not happen.
+					
+					$this->scriptLibraries[$scriptLibrary]['cdn'.$this->mini]=$option;
+					$this->addLibrary($this->head,	$scriptLibrary);
 				}
 			}
 		}
@@ -326,10 +335,8 @@ class FixHead {
 
 		
 	    //if ($this->isGuest || 
-	    //		((int)$this->params->get('script_mootools_enabled_logged_in')==0)) { // let's keep mootools for logged in users 
-	    	
-	    	//error_log('force mootools1:'.$this->params->get('script_mootools_enabled_logged_in'));
-	    	
+	    //		((int)$this->params->get('script_mootools_enabled_logged_in')==0)) { // let's keep mootools for logged in users
+	    	    	
 	    	$this->fixHeadLibrary('mootools_more');
 		    $this->fixHeadLibrary('mootools_core');
 		    
@@ -444,11 +451,7 @@ class FixHead {
 			
 			if (count($removeScripts)>0) {
 				foreach($this->head['script'] as $key=>$script) { 
-	
-					 
 					$script =preg_replace($removeScripts,'',$script);
-					//error_log("\n\n/SCRIPT vvvvvvvvvv\n\n".$script."\n\n/SCRIPT vvvvvvvvvvvvvv===========\n\n");
-				
 					$this->head['script'][$key] = $script;
 				}
 			}

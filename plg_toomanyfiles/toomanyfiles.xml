@@ -7,7 +7,7 @@
 	<license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>
 	<authorEmail>support@fasterjoomla.com</authorEmail>
 	<authorUrl>www.fasterjoomla.com</authorUrl>
-	<version>1.5.11</version>
+	<version>1.6.1</version>
 	<description>PLG_SYSTEM_TOOMANYFILES_XML_DESCRIPTION</description>
 	<files>
 		<filename plugin="toomanyfiles">toomanyfiles.php</filename>
@@ -51,46 +51,65 @@
 
 				<field type="spacer" name="scriptsincludelibraries"
 					label="PLG_2MANY_SEPARATOR_INCLUDE_LIBRARIES_LABEL" description="PLG_2MANY_SEPARATOR_INCLUDE_LIBRARIES_DESC" />
-
+			
 				<field name="modernizr" type="list" default="1"
 					label="PLG_2MANY_FIELD_MODERNIZR_LABEL" description="PLG_2MANY_FIELD_MODERNIZR_DESC"
 					filter="integer">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-
-				<field name="script_mootools_core" type="list" default="0"
+				
+				<field name="script_mootools_core" type="zzlibrary" default="0"
 					label="PLG_2MANY_FIELD_MOOTOOLS_CORE_LABEL" description="PLG_2MANY_OPTION_LIBRARIES_DESC"
-					filter="integer">
+					filter="raw" directory="/media/system/js/" filefilter="mootools-core.*">
 					<option value="-1">PLG_2MANY_FIELD_MOOTOOLS_EXTRAS</option>
 					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
-					<option value="1">JTOOLBAR_ENABLE</option>
-				</field>
-
-				<field name="script_mootools_more" type="list" default="0"
-					label="PLG_2MANY_FIELD_MOOTOOLS_MORE_LABEL" description="PLG_2MANY_OPTION_LIBRARIES_DESC"
-					filter="integer">
-					<option value="-1">JTOOLBAR_REMOVE</option>
-					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
-					<option value="1">JTOOLBAR_ENABLE</option>
-				</field>
-
-				<field name="script_jquery" type="list" default="1"
-					label="PLG_2MANY_FIELD_JQUERY_LABEL" description="PLG_2MANY_OPTION_LIBRARIES_DESC"
-					filter="integer">
-					<option value="-1">JTOOLBAR_REMOVE</option>
-					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
-					<option value="1">JTOOLBAR_ENABLE</option>
-				</field>
-
-				<field name="script_jquery_ui" type="list" default="0"
-					label="PLG_2MANY_FIELD_JQUERY_UI_LABEL" description="PLG_2MANY_OPTION_LIBRARIES_DESC"
-					filter="integer">
-					<option value="-1">JTOOLBAR_REMOVE</option>
-					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
-					<option value="1">JTOOLBAR_ENABLE</option>
+					<group value="local" label="PLG_2MANY_GROUP_LOCAL">
+					</group>
+					<group value="cdn" label="PLG_2MANY_GROUP_CDN">
+						<option value="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools.js" />
+						<option value="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js" />
+					</group>
 				</field>
 				
+				<field name="script_mootools_more" type="zzlibrary" default="0"
+					label="PLG_2MANY_FIELD_MOOTOOLS_MORE_LABEL" description="PLG_2MANY_OPTION_LIBRARIES_DESC"
+					filter="raw" directory="/media/system/js/" filefilter="mootools-more.*">
+					<option value="-1">JTOOLBAR_REMOVE</option>
+					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
+					<group value="local" label="PLG_2MANY_GROUP_LOCAL">
+					</group>
+					<group value="cdn" label="PLG_2MANY_GROUP_CDN">
+						<option value="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools.js" />
+						<option value="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js" />
+					</group>
+				</field>
+
+				<field name="script_jquery" type="zzlibrary" default="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.js"
+					label="PLG_2MANY_FIELD_JQUERY_LABEL" description="PLG_2MANY_OPTION_LIBRARIES_DESC"
+					filter="raw" directory="js/" filefilter="jquery-1.*">
+					<option value="-1">JTOOLBAR_REMOVE</option>
+					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
+					<group value="local" label="PLG_2MANY_GROUP_LOCAL">
+					</group>
+					<group value="cdn" label="PLG_2MANY_GROUP_CDN">
+						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.js" />
+						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" />
+					</group>
+				</field>
+
+				<field name="script_jquery_ui" type="zzlibrary" default="0"
+					label="PLG_2MANY_FIELD_JQUERY_UI_LABEL" description="PLG_2MANY_OPTION_LIBRARIES_DESC"
+					filter="raw" directory="js/" filefilter="jquery-ui.*">
+					<option value="-1">JTOOLBAR_REMOVE</option>
+					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
+					<group value="local" label="PLG_2MANY_GROUP_LOCAL">
+					</group>
+					<group value="cdn" label="PLG_2MANY_GROUP_CDN">
+						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery-ui.js" />
+						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery-ui.min.js" />
+					</group>
+				</field>
 			</fieldset>
 			<fieldset name="advanced">
 
