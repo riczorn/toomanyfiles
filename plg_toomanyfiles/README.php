@@ -76,10 +76,15 @@ Version 1.5.11 (2014-11-11)
 	incompatibilities with Admin Tools by Akeeba.
 	
 Version 1.6.1 (2014-12-02)
-	Added extra configuration params to specify the exact version and source of libraries
+*	Added extra configuration params to specify the exact version and source of libraries
 	The configuration is backwards compatible: i.e. your previous settings will continue
 	to work; however, once you open the plugin the old configuration options will be changed and
 	you'll have to choose an explicit library.  Once you have made your choice, toomanyfiles
 	will not automatically change library version when it updates.
 	This ensures you can use jQuery 1 or 2 in the exact version you tested for.
-	
+*	Deprecation check: removed JError.
+*	Added support for improperly formatted <link > tags
+
+NOTE : Joomla 3 compatibility only!!! A future version will restore 2.5 compatibility,
+	but in order to speed up the integration with the TooManyFilesPro component faster,
+	the next few versions will be 3.x only.

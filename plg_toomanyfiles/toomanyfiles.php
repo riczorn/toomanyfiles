@@ -84,6 +84,17 @@ class plgSystemTooManyFiles extends JPlugin
 	 * Exclude administrator, non-html views, logged in users
 	 */
 	function isAllowed() {
+		if (JPATH_BASE == JPATH_ADMINISTRATOR) {
+			// why not optimize for managers and administrators, too?
+			// Simple: they have all sorts of relative paths to /administrator which can be handled
+			return false;
+		}
+		$document	= JFactory::getDocument();
+		
+		if ( $document->getType() != 'html' ) {
+			return false;
+		}		
+		
 		$user = JFactory::getUser();
 		//if (!$user->guest) return false;
 		
@@ -98,22 +109,11 @@ class plgSystemTooManyFiles extends JPlugin
 			if(in_array('2',$groups)) {
 				if (strpos($enabled_users,'reg')===false) {return false;}
 			}
-		}
-		
-		$document	= JFactory::getDocument();
-		
-		if (JPATH_BASE == JPATH_ADMINISTRATOR) {
-			// why not optimize for managers and administrators, too? 
-			// Simple: they have all sorts of relative paths to /administrator which can be handled 
-		 	return false;
-		}
-
-		if ( $document->getType() != 'html' ) { 
-			return false; 
-		}
+		}		
 		
 		// let's check if the current component is in the excluded list (from plugin's params)
-	    $option = JRequest::getString('option','');
+		$input = JFactory::getApplication()->input;
+	    $option = $input->get('option','');
 	    foreach(explode("\n",trim($this->params->get('exclude_components'),"\n \t")) as $excl) {
 	    	$excl = trim($excl);
 			if (!empty($excl) && $option==$excl) {
@@ -121,7 +121,7 @@ class plgSystemTooManyFiles extends JPlugin
 			}
 	    }
 	    
-	    $Itemid = JRequest::getString('Itemid','');
+	    $Itemid = $input->get('Itemid','');
 	    foreach(explode("\n",trim($this->params->get('exclude_pages'),"\n \t")) as $excl) {
 	    	$excl = trim($excl);
 	    	if (!empty($excl) && $Itemid==$excl) {
@@ -130,7 +130,7 @@ class plgSystemTooManyFiles extends JPlugin
 	    }
 
 	    // special flag passed by the component toomanyfiles:
-	    $noCompress = JRequest::getInt('nocompress',0);
+	    $noCompress = $input->getInt('nocompress',0);
 	    if ($noCompress) {
 	    	return false;
 	    }

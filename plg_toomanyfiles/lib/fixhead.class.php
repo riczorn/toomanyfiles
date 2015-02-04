@@ -565,7 +565,7 @@ class FixHead {
 			// upgraded to (see comment above):
 			'/(<!--\s*\[if [^\]]*\]>\s*)?(<script)\b([^><]*)>(.*?)<\/script>(\s*<!\[endif\]\s*-->)?/ism',
 			// for styles, same logic:
-			'/(<!--\s*\[if [^\]]*\]>\s*)?(<link)\b([^>]*)\/>(\s*<!\[endif\]\s*-->)?/ism'
+			'/(<!--\s*\[if [^\]]*\]>\s*)?(<link)\b([^>]*)\/?>(\s*<!\[endif\]\s*-->)?/ism'
 		);
 		// this should be invoked before fix() otherwise fix() could miss duplicates.
 		$body = preg_replace_callback($expressions, array(&$this,  'moveItemsCallback'), $body);
@@ -617,7 +617,7 @@ class FixHead {
 	 */
 	function moveStylesCallback($matches){
 		$esclusion_styles = array(
-			'gzip.php' // yoothemes' styles compressor, it joins all the templates' files into one package and also
+			'gzip.php' // yoothemes' warp 6 styles compressor, it joins all the templates' files into one package and also
 						// inlines resources with base 64 encoding (which we don't) because they officially don't support IE6
 		);
 		$attrs = array('href'=>'','type'=>'','title'=>'','rel'=>'','media'=>'');
@@ -627,15 +627,15 @@ class FixHead {
 	    	$attrs[$attr_name]=$attr_matches[2][$key];
 	    }
 	    
-	    if (strtolower($attrs['type'])=='style/css' || strtolower($attrs['rel']) == 'stylesheet') {
+	    if (strtolower($attrs['type'])=='style/css' || strtolower($attrs['type'])=='text/css' || strtolower($attrs['rel']) == 'stylesheet') {
 			foreach($esclusion_styles as $exclusion) {
 				if (strpos($matches[2],$exclusion)!==false) {
 						$comment = $this->debugmode>0?"<!-- TooManyFiles.fixHead: I found this script but excluded it (matching rule $exclusion): -->\n":"";
 						return $comment.$matches[0];
 				}
 			}
-			$this->addStylesheets($this->head,$attrs['href'],$attrs['type'],$attrs['rel'],$attrs['title'],$attrs['media']);
-			return $this->debugmode>0?"<!-- the file ".$attrs['href']. " was removed for compression -->\n":"";
+			$this->addStylesheets($this->head, $attrs['href'], $attrs['type'], $attrs['rel'], $attrs['title'], $attrs['media']);
+			return $this->debugmode>0?"<!-- the file ". $attrs['href']. " was removed for compression -->\n":"";
 	    } else {
 	    	// it's not a style, let's return it and pretend we were never here:
 	    	return $matches[0];
@@ -948,6 +948,5 @@ class FixHead {
 		}
 		return $buffer;	
 	}
-	
 }
 
