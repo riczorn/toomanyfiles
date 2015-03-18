@@ -89,9 +89,15 @@ NOTE : Joomla 3 compatibility only!!! A future version will restore 2.5 compatib
 	but in order to speed up the integration with the TooManyFilesPro component faster,
 	the next few versions will be 3.x only.
 
-Version 1.6.2 (2015-03-18)
+Version 1.6.2 (2015-03-16)
 *	Extra configurations params now work in Joomla 3.3 and 3.4
-*   New great feature: fix jQuery compatibility issues.
+*   Fix relative paths gone wrong i.e. loading a script from a relative path such as 
+			modules/assets/something.js
+		instead of 
+			/modules/assets/something.js
+			
+Version 1.6.3 (2015-03-18)
+*   fix jQuery compatibility issues.
 		Just enable the flag "Fix $-jQuery Error" in the plugin Header Management options.
 		
 		Some scripts rely on the prefix $ being available; 
