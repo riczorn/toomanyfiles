@@ -221,13 +221,15 @@ class FixHead {
 	 * @param unknown_type $defer		// careful: if false it won't be added; but if it's a string 'no' or 'false' it will be added. 
 	 * @param unknown_type $async		// same as above.
 	 */
-	function addScripts(&$container,$scripturl,$atTop=true, $fallback="", $defer=false, $async=false) {
+	function addScripts(&$container, $scripturl,$atTop=true, $fallback="", $defer=false, $async=false) {
 		$scripturl = trim($scripturl);
-		if (empty($scripturl)) return;
+		if (empty($scripturl)) {
+			return;
+		}
 		
 		$options = array('mime'=>'text/javascript', 'defer'=>$defer, 'async'=>$async);
+		
 		if (!empty($fallback)) {
-			
 			$options['fallback'] = $fallback;
 		}
 		if ($atTop) {
