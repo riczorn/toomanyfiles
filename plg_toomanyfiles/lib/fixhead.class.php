@@ -178,7 +178,11 @@ class FixHead {
 	function addStylesheets(&$container,$href,$type,$rel,$title=NULL,$media=NULL,$attribs=NULL) {
 		$href = trim($href);
 		
+		$scripturl = $this->fixResourceUrl($scripturl);
+		
 		if (empty($href)) return;
+		
+		//$href = $this->fixResourceUrl($href);
 		if (strpos($href,'//')===false) {
 			if (strpos($href, $this->baseurl)) {
 				if (strpos($href,'/')===0) {
@@ -220,13 +224,13 @@ class FixHead {
 	function addScripts(&$container,$scripturl,$atTop=true, $fallback="", $defer=false, $async=false) {
 		$scripturl = trim($scripturl);
 		if (empty($scripturl)) return;
-		if (strpos($scripturl,'//')===false) {
-			if (strpos($scripturl, $this->baseurl)) {
-				if (strpos($scripturl,'/')===0) {
-					$scripturl = $this->baseurl.$scripturl;
-				}
-			}
-		}
+		
+		//$this->test();
+		
+		
+		$scripturl = $this->fixResourceUrl($scripturl);
+		
+		
 		
 		$options = array('mime'=>'text/javascript', 'defer'=>$defer, 'async'=>$async);
 		if (!empty($fallback)) {
@@ -241,6 +245,47 @@ class FixHead {
 		}
 	}
 	
+	/**
+	 * Urls of resources (javascript, css) can be wrong altogether:
+	 * Accepted format: 
+	 * 	http(s)://example.com/...
+	 *  //example.com/...
+	 *  /somepath/...
+	 * but could also be:
+	 *  somepath (relative to what?) => fix by adding basepath;
+	 *  /somerootpath when $basepath is a folder down, these could be sending outside the
+	 *    webroot => simply add basepath.
+	 * @param unknown $scripturl
+	 */
+	function fixResourceUrl($scripturl) {
+		
+		if (strpos($scripturl,'//')===false) {
+			// it is a local path;
+		
+			// is this resource relative? i.e. "modules/mod_name/assets/j.js" ?
+			// add a slash:
+			if (strpos($scripturl,'/')===0) {
+				// fine, starts with a slash;
+			} else if (strpos($scripturl,'..')===0) {
+				// what? relative to what, the url? are we out of our minds?
+				// let's guess here, maybe it's the template?
+				// we could go guessing but this is too awkward to deal with.
+		
+			} else {
+				// a relative path, just add a slash:
+				$scripturl = '/'.$scripturl;
+			}
+				
+				
+			if (strpos($scripturl, $this->baseurl)) {
+				if (strpos($scripturl,'/')===0) {
+					$scripturl = $this->baseurl.$scripturl;
+				}
+			}
+		}
+		return $scripturl;
+	}
+	
 	/** 
 	 * Simple add  a script snippet
 
@@ -251,6 +296,7 @@ class FixHead {
 		if (empty($container['script'])) {
 			$container['script'] = array('text/javascript'=>'');
 		}
+		
 		$container['script']['text/javascript'] .= "\n". $script . "\n";
 	}
 
@@ -338,7 +384,8 @@ class FixHead {
 	}
 	
 	/**
-	 * This is the main function, it iterates through the options and invokes fixHeadFoot accordingly.
+	 * This is the main function, it iterates through the options and invokes 
+	 * fixHeadFoot accordingly.
 	 * 
 	 * Scripts management.  Force loading some scripts and optionally move them from header to the footer
 	 * 
@@ -978,6 +1025,43 @@ class FixHead {
 		}
 		
 		return $buffer;	
+	}
+	
+	/**
+	 * TEst a few functions
+	 */
+	function test() {
+		/**
+		 * http(s)://example.com/...
+		 *  //example.com/...
+		 *  /somepath/...
+		 * but could also be:
+		 *  somepath (relative to what?) => fix by adding basepath;
+		 *  /somerootpath when $basepath is a folder down, these could be sending outside the
+		 *    webroot => simply add basepath.
+		 */
+		$fixResourceUrlTests = array(
+				'http://mysite.com/media/test.js?params'=>'/media/test.js',
+				'http://example.com/media/test.js'=>'http://example.com/media/test.js',
+				'//example.com/media/test.js'=>'//example.com/media/test.js',
+				'//example.com/media/test.js?params'=>'//example.com/media/test.js?params',
+				'/somepath/media/test.js'=>'/somepath/media/test.js',
+				'/somepath/media/test.js?params'=>'/somepath/media/test.js',
+				'somepath/media/test.js' => '/somepath/media/test.js'
+		);
+		foreach ($fixResourceUrlTests as $test=>$result) {
+			$res = $this->fixResourceUrl($test);
+			printf('<div>Test: %s<br>
+					&nbsp;Expected Result: %s<br>
+					&nbsp;Actual Result: %s<br>
+					&nbsp;Pass: %s</div>',
+					$test, 
+					$result, 
+					$res,
+					var_export($res==$result,true)
+					);
+		}
+		die('a horrible horrible death.');
 	}
 }
 
