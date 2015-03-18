@@ -65,7 +65,7 @@ class FixHead {
 						'regexp'=>"\/jquery[0-9\.\-]*(.min)?\.js",
 						'fallback'=>"window.jQuery || document.write('<sc'+'ript src=\"{LOCALPATH}\"><\/sc'+'ript>');\n".
 								"window.jQuery && jQuery.noConflict();",		
-						'extrascript'=>"jQuery(function() {$=jQuery;});$=jQuery;"
+						'extrascript'=>'jQuery(function() {$=jQuery;});$=jQuery;'
 			),
 		"jquery_ui"=>array(
 			'local'=>$plugindir."/js/jquery-ui-$jquiversion.js",
