@@ -225,15 +225,9 @@ class FixHead {
 		$scripturl = trim($scripturl);
 		if (empty($scripturl)) return;
 		
-		//$this->test();
-		
-		
-		$scripturl = $this->fixResourceUrl($scripturl);
-		
-		
-		
 		$options = array('mime'=>'text/javascript', 'defer'=>$defer, 'async'=>$async);
 		if (!empty($fallback)) {
+			
 			$options['fallback'] = $fallback;
 		}
 		if ($atTop) {
@@ -418,6 +412,15 @@ class FixHead {
 			// requires css: body{ min-height:960px; ...
 	    	$this->addStyle($this->head, 'body {min-height:960px}');
 	    	$this->addScript($this->head, '/mobile/i.test(navigator.userAgent) && !window.location.hash && setTimeout(function () { if (!pageYOffset) window.scrollTo(0, 0); }, 500);');
+	    }
+	    
+	    // let's fix improper urls
+	    foreach($this->head['scripts'] as $key=>$value) {
+	    	$newkey =  $this->fixResourceUrl($key);
+	    	if ($newkey != $key) {
+	    		$this->head['scripts'][$newkey] = $value;
+	    		unset($this->head['scripts'][$key]);
+	    	}	    	
 	    }
 	    
 	    // now let's move the scripts to the footer
