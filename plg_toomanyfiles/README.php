@@ -88,3 +88,14 @@ Version 1.6.1 (2014-12-02)
 NOTE : Joomla 3 compatibility only!!! A future version will restore 2.5 compatibility,
 	but in order to speed up the integration with the TooManyFilesPro component faster,
 	the next few versions will be 3.x only.
+
+Version 1.6.2 (2015-03-18)
+*	Extra configurations params now work in Joomla 3.3 and 3.4
+*   New great feature: fix jQuery compatibility issues.
+		Just enable the flag "Fix $-jQuery Error" in the plugin Header Management options.
+		
+		Some scripts rely on the prefix $ being available; 
+		however, it is customary to load jQuery invoking noConflict() in Joomla!  
+		This option re-assigns $ to jQuery, so further scripts can rely on $ being jQuery.
+
+		
