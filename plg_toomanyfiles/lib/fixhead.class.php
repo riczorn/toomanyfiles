@@ -268,6 +268,13 @@ class FixHead {
 		$fallback = "";
 		if (!empty($lib['fallback'])) {
 			$fallback = str_replace('{LOCALPATH}', $lib['local'.$this->mini], $lib['fallback']);
+			// in case we want to remove jQuery/reconflict, it's necessary to remove all
+			// instances of jQuery.NoConflict(), including the ones we usually add.
+			if (($scriptLibrary=='jquery')
+					&& ($this->params->get('jquery_reconflict','0')=='1')) {
+						$fallback = '';
+					}
+			
 		}	
 		if (!empty($lib['cdn'.$this->mini]))
 			$this->addScripts($container, $lib['cdn'.$this->mini],$atTop, $fallback);
@@ -276,10 +283,15 @@ class FixHead {
 			$this->addScripts($container, $lib['local'.$this->mini],$atTop);
 		if (!empty($lib['extrascript'])) {
 			$extrascript = $lib['extrascript'];
+			/* $extrascript may contain the jquery anti-noConflict()
+			 * script which needs only be added if the jquery_noconflict
+			 * option has been set.
+			 */
 			if (($scriptLibrary=='jquery') 
 					&& ($this->params->get('jquery_reconflict','0')=='0')) {
 				$extrascript = '';
 			}
+			// but in jquery's case, we want to add it always:
 			if (isset( $lib['local'.$this->mini])) {
 				$this->addScript($container,str_replace('{LOCALPATH}', $lib['local'.$this->mini], $extrascript));
 			}
@@ -951,6 +963,12 @@ class FixHead {
 				$buffer .= $tab . '</script>' . $lnEnd;
 			}
 		}
+		
+		// Re-Conflict additional test: replace noConflict everywhere:
+		if ($this->params->get('jquery_reconflict','0')=='1') {
+			$buffer = str_replace('jQuery.noConflict()','1',$buffer);
+		}
+		
 		return $buffer;	
 	}
 }
