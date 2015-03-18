@@ -276,6 +276,10 @@ class FixHead {
 			$this->addScripts($container, $lib['local'.$this->mini],$atTop);
 		if (!empty($lib['extrascript'])) {
 			$extrascript = $lib['extrascript'];
+			if (($scriptLibrary=='jquery') 
+					&& ($this->params->get('jquery_reconflict','0')=='0')) {
+				$extrascript = '';
+			}
 			if (isset( $lib['local'.$this->mini])) {
 				$this->addScript($container,str_replace('{LOCALPATH}', $lib['local'.$this->mini], $extrascript));
 			}
