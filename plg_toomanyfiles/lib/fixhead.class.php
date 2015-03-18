@@ -64,7 +64,8 @@ class FixHead {
 						'cdnmini'=>"//ajax.googleapis.com/ajax/libs/jquery/$jqversion/jquery.min.js",
 						'regexp'=>"\/jquery[0-9\.\-]*(.min)?\.js",
 						'fallback'=>"window.jQuery || document.write('<sc'+'ript src=\"{LOCALPATH}\"><\/sc'+'ript>');\n".
-								"window.jQuery && jQuery.noConflict();"		
+								"window.jQuery && jQuery.noConflict();",		
+						'extrascript'=>"jQuery(function() {$=jQuery;});$=jQuery;"
 			),
 		"jquery_ui"=>array(
 			'local'=>$plugindir."/js/jquery-ui-$jquiversion.js",
@@ -116,7 +117,7 @@ class FixHead {
 				g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
 				s.parentNode.insertBefore(g,s)}(document,'script'));
 			  
-			  //<!-- record outbout links in Google Analytics 
+			  //<!-- record outbound links in Google Analytics 
 			  //Usage: <a href='.......' onclick=\"recordOutboundLink('name', 'category', 'what');\" > ... -->
 			  
 				function recordOutboundLink(link, category, action) {

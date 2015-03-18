@@ -13,13 +13,6 @@
  * @copyright (C) 2012 - 2014 http://www.fasterjoomla.com
  * @license GNU/GPL v2 or greater http://www.gnu.org/licenses/gpl-2.0.html
  */
-defined('_JEXEC') or die;
-
-/**
- * Version history
- * 1.2.9 2014-02-06:  Do not run at all if the user is logged in. This solves 99% of the previous issues.
- *
- */
 
 defined('_JEXEC') or die;
 
