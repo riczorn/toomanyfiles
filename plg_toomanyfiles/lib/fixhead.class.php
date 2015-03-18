@@ -918,7 +918,7 @@ class FixHead {
 				// remove jquery-noconflict.js from scripts
 				
 				if ($this->params->get('jquery_reconflict')) {
-					if (preg_match('/jquery.*noconflict/gi',$strSrc)) {
+					if (preg_match('/jquery.*noconflict/i',$strSrc)) {
 						continue;
 					}
 				}
