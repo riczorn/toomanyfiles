@@ -915,6 +915,14 @@ class FixHead {
 		if (isset($container['scripts'])) {
 			foreach ($container['scripts'] as $strSrc => $strAttr)
 			{
+				// remove jquery-noconflict.js from scripts
+				
+				if ($this->params->get('jquery_reconflict')) {
+					if (preg_match('/jquery.*noconflict/gi',$strSrc)) {
+						continue;
+					}
+				}
+				
 				$buffer .= $tab . '<script src="' . $strSrc . '"';
 				if (!is_null($strAttr['mime']))
 				{
