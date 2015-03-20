@@ -178,7 +178,7 @@ class FixHead {
 	function addStylesheets(&$container,$href,$type,$rel,$title=NULL,$media=NULL,$attribs=NULL) {
 		$href = trim($href);
 		
-		$scripturl = $this->fixResourceUrl($scripturl);
+		$href = $this->fixResourceUrl($href);
 		
 		if (empty($href)) return;
 		
@@ -221,7 +221,7 @@ class FixHead {
 	 * @param unknown_type $defer		// careful: if false it won't be added; but if it's a string 'no' or 'false' it will be added. 
 	 * @param unknown_type $async		// same as above.
 	 */
-	function addScripts(&$container, $scripturl,$atTop=true, $fallback="", $defer=false, $async=false) {
+	function addScripts(&$container, $scripturl, $atTop=true, $fallback="", $defer=false, $async=false) {
 		$scripturl = trim($scripturl);
 		if (empty($scripturl)) {
 			return;
