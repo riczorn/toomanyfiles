@@ -64,8 +64,7 @@ class FixHead {
 						'cdnmini'=>"//ajax.googleapis.com/ajax/libs/jquery/$jqversion/jquery.min.js",
 						'regexp'=>"\/jquery[0-9\.\-]*(.min)?\.js",
 						'fallback'=>"window.jQuery || document.write('<sc'+'ript src=\"{LOCALPATH}\"><\/sc'+'ript>');\n".
-								"window.jQuery && jQuery.noConflict();",		
-						'extrascript'=>'jQuery(function() {$=jQuery;});$=jQuery;'
+								"window.jQuery && jQuery.noConflict();"		
 			),
 		"jquery_ui"=>array(
 			'local'=>$plugindir."/js/jquery-ui-$jquiversion.js",
@@ -117,7 +116,7 @@ class FixHead {
 				g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
 				s.parentNode.insertBefore(g,s)}(document,'script'));
 			  
-			  //<!-- record outbound links in Google Analytics 
+			  //<!-- record outbout links in Google Analytics 
 			  //Usage: <a href='.......' onclick=\"recordOutboundLink('name', 'category', 'what');\" > ... -->
 			  
 				function recordOutboundLink(link, category, action) {
@@ -178,11 +177,7 @@ class FixHead {
 	function addStylesheets(&$container,$href,$type,$rel,$title=NULL,$media=NULL,$attribs=NULL) {
 		$href = trim($href);
 		
-		$href = $this->fixResourceUrl($href);
-		
 		if (empty($href)) return;
-		
-		//$href = $this->fixResourceUrl($href);
 		if (strpos($href,'//')===false) {
 			if (strpos($href, $this->baseurl)) {
 				if (strpos($href,'/')===0) {
@@ -221,14 +216,18 @@ class FixHead {
 	 * @param unknown_type $defer		// careful: if false it won't be added; but if it's a string 'no' or 'false' it will be added. 
 	 * @param unknown_type $async		// same as above.
 	 */
-	function addScripts(&$container, $scripturl, $atTop=true, $fallback="", $defer=false, $async=false) {
+	function addScripts(&$container,$scripturl,$atTop=true, $fallback="", $defer=false, $async=false) {
 		$scripturl = trim($scripturl);
-		if (empty($scripturl)) {
-			return;
+		if (empty($scripturl)) return;
+		if (strpos($scripturl,'//')===false) {
+			if (strpos($scripturl, $this->baseurl)) {
+				if (strpos($scripturl,'/')===0) {
+					$scripturl = $this->baseurl.$scripturl;
+				}
+			}
 		}
 		
 		$options = array('mime'=>'text/javascript', 'defer'=>$defer, 'async'=>$async);
-		
 		if (!empty($fallback)) {
 			$options['fallback'] = $fallback;
 		}
@@ -241,47 +240,6 @@ class FixHead {
 		}
 	}
 	
-	/**
-	 * Urls of resources (javascript, css) can be wrong altogether:
-	 * Accepted format: 
-	 * 	http(s)://example.com/...
-	 *  //example.com/...
-	 *  /somepath/...
-	 * but could also be:
-	 *  somepath (relative to what?) => fix by adding basepath;
-	 *  /somerootpath when $basepath is a folder down, these could be sending outside the
-	 *    webroot => simply add basepath.
-	 * @param unknown $scripturl
-	 */
-	function fixResourceUrl($scripturl) {
-		
-		if (strpos($scripturl,'//')===false) {
-			// it is a local path;
-		
-			// is this resource relative? i.e. "modules/mod_name/assets/j.js" ?
-			// add a slash:
-			if (strpos($scripturl,'/')===0) {
-				// fine, starts with a slash;
-			} else if (strpos($scripturl,'..')===0) {
-				// what? relative to what, the url? are we out of our minds?
-				// let's guess here, maybe it's the template?
-				// we could go guessing but this is too awkward to deal with.
-		
-			} else {
-				// a relative path, just add a slash:
-				$scripturl = '/'.$scripturl;
-			}
-				
-				
-			if (strpos($scripturl, $this->baseurl)) {
-				if (strpos($scripturl,'/')===0) {
-					$scripturl = $this->baseurl.$scripturl;
-				}
-			}
-		}
-		return $scripturl;
-	}
-	
 	/** 
 	 * Simple add  a script snippet
 
@@ -292,7 +250,6 @@ class FixHead {
 		if (empty($container['script'])) {
 			$container['script'] = array('text/javascript'=>'');
 		}
-		
 		$container['script']['text/javascript'] .= "\n". $script . "\n";
 	}
 
@@ -310,13 +267,6 @@ class FixHead {
 		$fallback = "";
 		if (!empty($lib['fallback'])) {
 			$fallback = str_replace('{LOCALPATH}', $lib['local'.$this->mini], $lib['fallback']);
-			// in case we want to remove jQuery/reconflict, it's necessary to remove all
-			// instances of jQuery.NoConflict(), including the ones we usually add.
-			if (($scriptLibrary=='jquery')
-					&& ($this->params->get('jquery_reconflict','0')=='1')) {
-						$fallback = '';
-					}
-			
 		}	
 		if (!empty($lib['cdn'.$this->mini]))
 			$this->addScripts($container, $lib['cdn'.$this->mini],$atTop, $fallback);
@@ -325,15 +275,6 @@ class FixHead {
 			$this->addScripts($container, $lib['local'.$this->mini],$atTop);
 		if (!empty($lib['extrascript'])) {
 			$extrascript = $lib['extrascript'];
-			/* $extrascript may contain the jquery anti-noConflict()
-			 * script which needs only be added if the jquery_noconflict
-			 * option has been set.
-			 */
-			if (($scriptLibrary=='jquery') 
-					&& ($this->params->get('jquery_reconflict','0')=='0')) {
-				$extrascript = '';
-			}
-			// but in jquery's case, we want to add it always:
 			if (isset( $lib['local'.$this->mini])) {
 				$this->addScript($container,str_replace('{LOCALPATH}', $lib['local'.$this->mini], $extrascript));
 			}
@@ -380,8 +321,7 @@ class FixHead {
 	}
 	
 	/**
-	 * This is the main function, it iterates through the options and invokes 
-	 * fixHeadFoot accordingly.
+	 * This is the main function, it iterates through the options and invokes fixHeadFoot accordingly.
 	 * 
 	 * Scripts management.  Force loading some scripts and optionally move them from header to the footer
 	 * 
@@ -414,15 +354,6 @@ class FixHead {
 			// requires css: body{ min-height:960px; ...
 	    	$this->addStyle($this->head, 'body {min-height:960px}');
 	    	$this->addScript($this->head, '/mobile/i.test(navigator.userAgent) && !window.location.hash && setTimeout(function () { if (!pageYOffset) window.scrollTo(0, 0); }, 500);');
-	    }
-	    
-	    // let's fix improper urls
-	    foreach($this->head['scripts'] as $key=>$value) {
-	    	$newkey =  $this->fixResourceUrl($key);
-	    	if ($newkey != $key) {
-	    		$this->head['scripts'][$newkey] = $value;
-	    		unset($this->head['scripts'][$key]);
-	    	}	    	
 	    }
 	    
 	    // now let's move the scripts to the footer
@@ -698,18 +629,19 @@ class FixHead {
 	    
 	    if (strtolower($attrs['type'])=='style/css' || strtolower($attrs['type'])=='text/css' || strtolower($attrs['rel']) == 'stylesheet') {
 			foreach($esclusion_styles as $exclusion) {
-				if (strpos($matches[2],$exclusion)!==false) {
-						$comment = $this->debugmode>0?"<!-- TooManyFiles.fixHead: I found this script but excluded it (matching rule $exclusion): -->\n":"";
+				if (strpos($matches[2], $exclusion)!==false) {
+						$comment = $this->debugmode>0?"<!-- TooManyFiles.fixHead: I found this style but excluded it (matching rule $exclusion): -->\n":"";
 						return $comment.$matches[0];
 				}
 			}
+			// test that local files exists
 			$this->addStylesheets($this->head, $attrs['href'], $attrs['type'], $attrs['rel'], $attrs['title'], $attrs['media']);
 			return $this->debugmode>0?"<!-- the file ". $attrs['href']. " was removed for compression -->\n":"";
 	    } else {
 	    	// it's not a style, let's return it and pretend we were never here:
 	    	return $matches[0];
 	    }
-		$comment = $this->debugmode>0?"<!-- TooManyFiles.fixHead: I found this nice script but didn't touch it: -->\n":"";
+		$comment = $this->debugmode>0?"<!-- TooManyFiles.fixHead: I found this nice style but didn't touch it: -->\n":"";
 		return  $comment . $matches[0];
 	}
 	
@@ -814,13 +746,13 @@ class FixHead {
 				$script = trim($script," \n\t"); // there are already extra \n during import
 				if (strlen($script)>0) {
 					$i++;
-					$newScript .= $script;
+					$newScript .= $script . ";";
 				}
 			}
 		}
 		$this->removeComments($newScript);
 		
-		$this->addScript($this->foot,$newScript);
+		$this->addScript($this->foot, $newScript);
 		// then let's remove them from the source.
 	    $arr = preg_replace('/(<script\b[^>]*>.*?<\/script>)/is', "", $arr);
 	    	    
@@ -967,14 +899,6 @@ class FixHead {
 		if (isset($container['scripts'])) {
 			foreach ($container['scripts'] as $strSrc => $strAttr)
 			{
-				// remove jquery-noconflict.js from scripts
-				
-				if ($this->params->get('jquery_reconflict')) {
-					if (preg_match('/jquery.*noconflict/i',$strSrc)) {
-						continue;
-					}
-				}
-				
 				$buffer .= $tab . '<script src="' . $strSrc . '"';
 				if (!is_null($strAttr['mime']))
 				{
@@ -1023,50 +947,7 @@ class FixHead {
 				$buffer .= $tab . '</script>' . $lnEnd;
 			}
 		}
-		
-		// Re-Conflict additional test: replace noConflict everywhere:
-		if ($this->params->get('jquery_reconflict','0')=='1') {
-			$buffer = str_replace('jQuery.noConflict()','1',$buffer);
-		}
-		
 		return $buffer;	
-	}
-	
-	/**
-	 * TEst a few functions
-	 */
-	function test() {
-		/**
-		 * http(s)://example.com/...
-		 *  //example.com/...
-		 *  /somepath/...
-		 * but could also be:
-		 *  somepath (relative to what?) => fix by adding basepath;
-		 *  /somerootpath when $basepath is a folder down, these could be sending outside the
-		 *    webroot => simply add basepath.
-		 */
-		$fixResourceUrlTests = array(
-				'http://mysite.com/media/test.js?params'=>'/media/test.js',
-				'http://example.com/media/test.js'=>'http://example.com/media/test.js',
-				'//example.com/media/test.js'=>'//example.com/media/test.js',
-				'//example.com/media/test.js?params'=>'//example.com/media/test.js?params',
-				'/somepath/media/test.js'=>'/somepath/media/test.js',
-				'/somepath/media/test.js?params'=>'/somepath/media/test.js',
-				'somepath/media/test.js' => '/somepath/media/test.js'
-		);
-		foreach ($fixResourceUrlTests as $test=>$result) {
-			$res = $this->fixResourceUrl($test);
-			printf('<div>Test: %s<br>
-					&nbsp;Expected Result: %s<br>
-					&nbsp;Actual Result: %s<br>
-					&nbsp;Pass: %s</div>',
-					$test, 
-					$result, 
-					$res,
-					var_export($res==$result,true)
-					);
-		}
-		die('a horrible horrible death.');
 	}
 }
 

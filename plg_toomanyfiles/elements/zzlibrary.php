@@ -173,8 +173,6 @@ class JFormFieldZzlibrary extends JFormFieldGroupedList
 			$path = JPATH_SITE.'/plugins/system/toomanyfiles/'.$directory . '/';
 		}
 		
-		JLoader::import('joomla.filesystem.folder');
-		
 		$files = JFolder::files($path,$filefilter,false,false,	array(),	array(),true);
 		if (is_array($files)) {
 			$rel_path = str_replace(JPATH_SITE,'',$path);

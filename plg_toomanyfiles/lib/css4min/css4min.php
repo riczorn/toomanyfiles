@@ -230,8 +230,9 @@ class Css4Min {
 			foreach ($this->arraykeys as $arraykey)
 				if (isset($this->files[$arraykey])) {
 					$index = 0;
-					foreach ($this->files[$arraykey] as $file=>$options)
+					foreach ($this->files[$arraykey] as $fileKey=>$options)
 					{
+						$file = $fileKey;
 						$file = str_replace($this->siteurl,"",$file);
 						// remove ?random=11; but only on local file inclusion: not on remote scripts which may need params.
 						//error_log('addFiles '.$file);
@@ -259,13 +260,23 @@ class Css4Min {
 							//	error_log('    >'.$fileName);
 							}
 							if (!file_exists($fileName)) {
-								$this->error("css4min: File not found ". $fileName);//$this->wwwroot.DS.$file);
+								$this->error("css4min: File ignored: it does not exist ". $fileName);//$this->wwwroot.DS.$file);
 								
 								if ($this->isdebug>3) {
 									echo "<hr><h5 style='font-size:24px;background-color:red;color:black'>".join("<br>",explode("\n",$this->message))."</h5><hr>";
 								}
 								
-								return false;
+								return false; // il filtro dovrebbe esser fatto da fixhead?
+								
+								$thisArray = $this->files[$arraykey];
+								//$this->error(json_encode($thisArray));
+								unset($thisArray[$fileKey]);
+								unset($thisArray[$file]);
+								$this->files[$arraykey] = $thisArray;
+								//$this->error('__________');
+								//$this->error(json_encode($thisArray));
+								//$this->error('__________');
+								// continue instead: return false;
 							}
 						}
 					$index++; // this is used to rearrange the array.
@@ -377,7 +388,7 @@ class Css4Min {
 			);
 		if ($isLocal) {
 			// let's exclude scripts too:
-			// scripts must contain php 
+			// scripts must NOT contain php 
 			if (strpos($file,'.php')>0) {
 				$isLocal = false;
 			}
@@ -387,6 +398,7 @@ class Css4Min {
 			if (strpos($file, '/?')>0) {
 				$isLocal = false;
 			}
+			
 			// there could be a further exception: where ? is added to a folder... do we really 
 			// want to waste precious processing time testing for this?
 			if ($querypos = strpos($file, '?')>0) {
@@ -399,6 +411,18 @@ class Css4Min {
 					}
 				}
 			}
+
+			// as time goes on, the coders never cease to surprise us:
+			// now a system plugin serves the css from a fake url /default/css.html
+			$ext = pathinfo($file,PATHINFO_EXTENSION);
+			if (! strpos(' .css .js ', $ext)) {
+				$isLocal = false; 
+				// let's pretend it's not local, it could be the above:
+				// otherwise, it's just someone who served a css or js with the wrong extension,
+				// and we'll punish their disrespect for the conventions by not compressing their files.
+			}
+				
+				
 		}
 		return $isLocal;
 	}
