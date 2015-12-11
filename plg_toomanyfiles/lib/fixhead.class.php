@@ -63,8 +63,8 @@ class FixHead {
 						'cdn'=>"//ajax.googleapis.com/ajax/libs/jquery/$jqversion/jquery.js",
 						'cdnmini'=>"//ajax.googleapis.com/ajax/libs/jquery/$jqversion/jquery.min.js",
 						'regexp'=>"\/jquery[0-9\.\-]*(.min)?\.js",
-						'fallback'=>"window.jQuery || document.write('<sc'+'ript src=\"{LOCALPATH}\"><\/sc'+'ript>');\n".
-								"window.jQuery && jQuery.noConflict();"		
+						'fallback'=>"window.jQuery || document.write('<sc'+'ript src=\"{LOCALPATH}\"><\/sc'+'ript>');"
+										
 			),
 		"jquery_ui"=>array(
 			'local'=>$plugindir."/js/jquery-ui-$jquiversion.js",
@@ -918,10 +918,27 @@ class FixHead {
 				 * here we manage the fallback code. 
 				 * This will load the jQuery library locally if the CDN failed.
 				 */
-				if (!empty($strAttr['fallback'])) {
+				if (!empty($fallbackStr = $strAttr['fallback'])) {
+					// this means it's jQuery;
 					$buffer .= '<script type="text/javascript">'.$lnEnd.
-							$strAttr['fallback'].$lnEnd.
+					//"window.jQuery || document.write('<sc'+'ript src=\"{LOCALPATH}\"><\/sc'+'ript>');\n".
+					$fallbackStr.$lnEnd.
+					'</script>'.$lnEnd;
+					switch ($this->params->get('scripts_usecompressed')) {
+						case -1: // remove
+							$buffer .= '<script type="text/javascript">'.$lnEnd.
+								'$ = jQuery; '.$lnEnd.
 							'</script>'.$lnEnd;
+							break;
+						case 0: // leave as is
+							break;
+						case 1: // add:
+							$buffer .= '<script type="text/javascript">'.$lnEnd.
+								'window.jQuery && jQuery.noConflict();'.$lnEnd.
+								'</script>'.$lnEnd;
+							break;
+					} 
+					
 				}
 			}
 		}
