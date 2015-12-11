@@ -918,13 +918,14 @@ class FixHead {
 				 * here we manage the fallback code. 
 				 * This will load the jQuery library locally if the CDN failed.
 				 */
-				if (!empty($fallbackStr = $strAttr['fallback'])) {
+				if (!empty($strAttr['fallback'])) {
 					// this means it's jQuery;
+					$fallbackStr = $strAttr['fallback'];
 					$buffer .= '<script type="text/javascript">'.$lnEnd.
 					//"window.jQuery || document.write('<sc'+'ript src=\"{LOCALPATH}\"><\/sc'+'ript>');\n".
 					$fallbackStr.$lnEnd.
 					'</script>'.$lnEnd;
-					switch ($this->params->get('scripts_usecompressed')) {
+					switch ($this->params->get('script_jquery_noconflict')) {
 						case -1: // remove
 							$buffer .= '<script type="text/javascript">'.$lnEnd.
 								'$ = jQuery; '.$lnEnd.

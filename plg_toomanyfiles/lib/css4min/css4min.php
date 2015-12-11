@@ -415,7 +415,9 @@ class Css4Min {
 			// as time goes on, the coders never cease to surprise us:
 			// now a system plugin serves the css from a fake url /default/css.html
 			$ext = pathinfo($file,PATHINFO_EXTENSION);
-			if (! strpos(' .css .js ', $ext)) {
+			if (empty(trim($ext))) {
+				$isLocal = false;
+			} else if (! strpos(' .css .js ', $ext)) {
 				$isLocal = false; 
 				// let's pretend it's not local, it could be the above:
 				// otherwise, it's just someone who served a css or js with the wrong extension,
