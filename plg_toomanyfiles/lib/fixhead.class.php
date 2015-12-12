@@ -63,8 +63,8 @@ class FixHead {
 						'cdn'=>"//ajax.googleapis.com/ajax/libs/jquery/$jqversion/jquery.js",
 						'cdnmini'=>"//ajax.googleapis.com/ajax/libs/jquery/$jqversion/jquery.min.js",
 						'regexp'=>"\/jquery[0-9\.\-]*(.min)?\.js",
-						'fallback'=>"window.jQuery || document.write('<sc'+'ript src=\"{LOCALPATH}\"><\/sc'+'ript>');"
-										
+						'fallback'=>"window.jQuery || document.write('<sc'+'ript src=\"{LOCALPATH}\"><\/sc'+'ript>');",
+						'dependencies'=>"noconflict"			
 			),
 		"jquery_ui"=>array(
 			'local'=>$plugindir."/js/jquery-ui-$jquiversion.js",
@@ -75,7 +75,7 @@ class FixHead {
 		),
 		"noconflict"=>array(
 				'regexp'=>"jquery[-_\.]*noconflict([-_\.]min)?\.js",
-				'removeRegex'=>'%[\n;][^;\n]*jQuery.noConflict[^;\n]*[;\n]%',
+				'removeRegex'=>'%[>\n;][^;\n]*jQuery.noConflict[^<;\n]*[<;\n]%',
 		),
 		"mootools_core"=>array(
 			'local'=>"/media/system/js/mootools-core-uncompressed.js",
@@ -901,7 +901,13 @@ class FixHead {
 			}
 		}
 		
+		
 		// Generate script file links
+		// noconflict library is just an extra 
+		// download for a one-line javascript; if needed, it will be re-added later 
+		// based on the "noConflict" options in the plugin configuration.
+		$this->removeLibrary($container, 'noconflict');
+		
 		if (isset($container['scripts'])) {
 			foreach ($container['scripts'] as $strSrc => $strAttr)
 			{
@@ -936,8 +942,11 @@ class FixHead {
 							$buffer .= '<script type="text/javascript">'.$lnEnd.
 								'$ = jQuery; '.$lnEnd.
 							'</script>'.$lnEnd;
-							$this->removeLibrary($this->head, 'noconflict');
 							
+							// although the context is correct, this is too late
+							// as the foot already was rendered;
+							//$this->removeLibrary($container, 'noconflict');
+	
 							break;
 						case 0: // leave as is
 							break;

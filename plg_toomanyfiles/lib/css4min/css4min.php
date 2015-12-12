@@ -423,8 +423,6 @@ class Css4Min {
 				// otherwise, it's just someone who served a css or js with the wrong extension,
 				// and we'll punish their disrespect for the conventions by not compressing their files.
 			}
-				
-				
 		}
 		return $isLocal;
 	}
