@@ -354,6 +354,14 @@ class FixHead {
 	    
 	    $this->fixHeadLibrary('jquery_ui');
 	    $this->fixHeadLibrary('jquery');
+	    
+	    // noconflict library is just an extra download for a one-line javascript;
+		// if needed, it will be re-added later 
+		// based on the "noConflict" options in the plugin configuration.
+		if ($this->params->get('script_jquery_noconflict') != 0) {
+			$this->removeLibrary($this->head, 'noconflict');
+		}
+	    
 	     
 	    if ($this->params->get('iskip')) { // skip iphone bar 
 	    	// hide bar on iPhone
@@ -903,11 +911,6 @@ class FixHead {
 		
 		
 		// Generate script file links
-		// noconflict library is just an extra 
-		// download for a one-line javascript; if needed, it will be re-added later 
-		// based on the "noConflict" options in the plugin configuration.
-		$this->removeLibrary($container, 'noconflict');
-		
 		if (isset($container['scripts'])) {
 			foreach ($container['scripts'] as $strSrc => $strAttr)
 			{
@@ -937,26 +940,11 @@ class FixHead {
 					//"window.jQuery || document.write('<sc'+'ript src=\"{LOCALPATH}\"><\/sc'+'ript>');\n".
 					$fallbackStr.$lnEnd.
 					'</script>'.$lnEnd;
-					switch ($this->params->get('script_jquery_noconflict')) {
-						case -1: // remove
-							$buffer .= '<script type="text/javascript">'.$lnEnd.
-								'$ = jQuery; '.$lnEnd.
-							'</script>'.$lnEnd;
-							
-							// although the context is correct, this is too late
-							// as the foot already was rendered;
-							//$this->removeLibrary($container, 'noconflict');
-	
-							break;
-						case 0: // leave as is
-							break;
-						case 1: // add:
-							$buffer .= '<script type="text/javascript">'.$lnEnd.
+					if ($this->params->get('script_jquery_noconflict') == 1) {
+						$buffer .= '<script type="text/javascript">'.$lnEnd.
 								'window.jQuery && jQuery.noConflict();'.$lnEnd.
 								'</script>'.$lnEnd;
-							break;
 					} 
-					
 				}
 			}
 		}

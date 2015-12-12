@@ -7,7 +7,7 @@
 	<license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>
 	<authorEmail>support@fasterjoomla.com</authorEmail>
 	<authorUrl>www.fasterjoomla.com</authorUrl>
-	<version>1.6.6</version>
+	<version>1.7.0</version>
 	<description>PLG_SYSTEM_TOOMANYFILES_XML_DESCRIPTION</description>
 	<files>
 		<filename plugin="toomanyfiles">toomanyfiles.php</filename>
@@ -98,7 +98,7 @@
 					</group>
 				</field>
 
-				<field name="script_jquery_noconflict" type="list" default="1"
+				<field name="script_jquery_noconflict" type="list" default="0"
 					label="PLG_2MANY_FIELD_JQUERY_FALLBACK_LABEL" description="PLG_2MANY_FIELD_JQUERY_FALLBACK_DESC" >
 					<option value="-1">JTOOLBAR_REMOVE</option>
 					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
