@@ -99,7 +99,7 @@
 				</field>
 
 				<field name="script_jquery_noconflict" type="list" default="1"
-					label="PLG_2MANY_FIELD_JQUERY_FALLBACK_LABEL" description="PLG_2MANY_FALLBACK_DESC" >
+					label="PLG_2MANY_FIELD_JQUERY_FALLBACK_LABEL" description="PLG_2MANY_FIELD_JQUERY_FALLBACK_DESC" >
 					<option value="-1">JTOOLBAR_REMOVE</option>
 					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
 					<option value="1">PLG_2MANY_OPTION_ADD</option>

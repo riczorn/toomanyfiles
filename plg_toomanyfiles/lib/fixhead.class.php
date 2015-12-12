@@ -144,7 +144,7 @@ class FixHead {
 	function removeLibrary(&$container, $scriptLibrary) {
 		if (isset($this->scriptLibraries[$scriptLibrary])) {
 			$lib = $this->scriptLibraries[$scriptLibrary];
-		
+			
 			foreach($container['scripts'] as $libpath=>$val) {
 				if  ( 
 						(!empty($lib['regexp']) && preg_match("/".$lib['regexp']."/", $libpath))
@@ -936,8 +936,8 @@ class FixHead {
 							$buffer .= '<script type="text/javascript">'.$lnEnd.
 								'$ = jQuery; '.$lnEnd.
 							'</script>'.$lnEnd;
-							
 							$this->removeLibrary($this->head, 'noconflict');
+							
 							break;
 						case 0: // leave as is
 							break;
