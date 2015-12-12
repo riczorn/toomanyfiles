@@ -115,9 +115,10 @@ NOTE : Joomla 3 compatibility only!!! A future version will restore 2.5 compatib
 	the next few versions will be 3.x only.
 	
 Version 1.7.0 (2015-12-12)
-*	Fix even MORE jQuery compatibility issues, with support for jQuery.noConflict()
-	which can be disabled, forced, or ignored in the plugin's options.
-	In case it is disabled or ignored, all internal and external calls are removed
-	and the single noConflict() call is added right after jQuery.
-	The new setting's default value is Leave as Is
+*	<b>Fix even MORE jQuery compatibility issues!</b> with support for jQuery.noConflict()
+	which can be disabled, added, or ignored in the plugin's options.
+	In case it is removed or added, all internal and external calls are removed
+	and the single noConflict() call is added right after jQuery if added.
+	The new setting's default value is 'Leave as Is' for legacy compatibility.
+	
 	

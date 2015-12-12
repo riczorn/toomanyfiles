@@ -93,8 +93,8 @@
 					<group value="local" label="PLG_2MANY_GROUP_LOCAL">
 					</group>
 					<group value="cdn" label="PLG_2MANY_GROUP_CDN">
-						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.js" />
-						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" />
+						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.js" />
+						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" />
 					</group>
 				</field>
 
