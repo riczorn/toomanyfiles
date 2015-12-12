@@ -74,7 +74,8 @@ class FixHead {
 			'regexp'=>"jquery-ui[0-9\.\-]*(custom)?(\.min)?\.js"
 		),
 		"noconflict"=>array(
-				'regexp'=>"jquery[-_\.]*noconflict([-_\.]min)?\.js"
+				'regexp'=>"jquery[-_\.]*noconflict([-_\.]min)?\.js",
+				'removeRegex'=>'%[\n;][^;\n]*jQuery.noConflict[^;\n]*[;\n]%',
 		),
 		"mootools_core"=>array(
 			'local'=>"/media/system/js/mootools-core-uncompressed.js",
@@ -171,24 +172,7 @@ class FixHead {
 		}
 	}
 	
-	/**
-	 * This is invoked on jQuery when processing fallback; 
-	 * remove all references to 
-	 * window.jQuery && jQuery.noConflict();
-	 * <script src="/media/jui/js/jquery-noconflict.js" type="text/javascript"></script>
-	 */
-	function removeNoConflictLibraries() {
-		$this->removeLibrary($this->head, 'noconflict');
-		foreach ($this->head['script'] as $type => $content) {
-			$contentLines = explode("\n",$content);
-			foreach ($contentLines as $i => $line) {
-				if (stripos($line,'jQuery.noConflict')) {
-					$contentLines[$i] = preg_replace('/[\n;][^;\n]*jQuery.noConflict[^;\n]*[;\n]/', ';', $line);					
-				}
-			}
-			$this->head['script'][$type] = join("\n", $contentLines);
-		}
-	}
+
 	
 	/**
 	 * Simple add style library
@@ -953,7 +937,7 @@ class FixHead {
 								'$ = jQuery; '.$lnEnd.
 							'</script>'.$lnEnd;
 							
-							$this->removeNoConflictLibraries();
+							$this->removeLibrary($this->head, 'noconflict');
 							break;
 						case 0: // leave as is
 							break;
