@@ -2,39 +2,39 @@
 /**
  * css4Min
  * Combine and compact Javascript and CSS resources
- * 
+ *
  * @package toomanyfiles.css4min
  * @author Riccardo Zorn support@fasterjoomla.com
  * @copyright (C) 2012 - 2014 http://www.fasterjoomla.com
  * @license GNU/GPL v2 or greater http://www.gnu.org/licenses/gpl-2.0.html
  *
  * This class has the purpose of reducing the number of requests a webpage makes.
- * This is accomplished by joining (putting together) all css files and js files, 
+ * This is accomplished by joining (putting together) all css files and js files,
  * then minifying and compressing.
  * A cache system with pre-compressed gzipped files ensures maximum performance.
- * 
- * Although this class is intended for use with Joomla by the plugin toomanyfiles, 
+ *
+ * Although this class is intended for use with Joomla by the plugin toomanyfiles,
  * there is a stand-alone test in the test subfolder.
  * plugins/system/toomanyfiles/lib/css4min/test/
  *
  * The headers are set so that the browser cache never expires; every time a new version is cached
  * its URI changes.
- * 
+ *
  * PRO Version June 2014
  * =====================
- * This library optionally allows for complete configuration performed by the component 
+ * This library optionally allows for complete configuration performed by the component
  * Too Many Files Pro.
  * The configuration consists of two options: use_pro and resource_package.
  * If set, a totally different approach is followed when compressing the files.
- * 
- * Instead of compressing the files that are found on every page, it uses a pre-defined 
- * "package" which contains user-picked scripts and libraries. 
+ *
+ * Instead of compressing the files that are found on every page, it uses a pre-defined
+ * "package" which contains user-picked scripts and libraries.
  * Everytime a library is requested, which is contained in the "package", the
  * full package is served. Everytime an extra library is requested, the default behaviour applies.
- * 
- *   By using the Pro component you select the heavy libraries that - even compressed - 
+ *
+ *   By using the Pro component you select the heavy libraries that - even compressed -
  *   take up valuable user time, which are used commonly throughout the site.
- *   Combining them in a single package saves precious time and resources, not only by 
+ *   Combining them in a single package saves precious time and resources, not only by
  *   compressing once and downloading on all pages, but also on not needing to check
  *   their last modified time at every page load (resulting in several fewer reads from disk
  *   and possibly a few ms saved depending on hosting.
@@ -43,10 +43,10 @@
 defined('_JEXEC') or die();
 /*
  * Usage:
- * During page output put all your css or js 
+ * During page output put all your css or js
  * - in a Joomla JDocumentHtml:: Head format
  * - in an array, with the full paths relative to the root of the site just
- * as you would output them. 
+ * as you would output them.
  * - in a comma separated string of paths.
  *
  * $css4Min = new Css4Min();
@@ -63,7 +63,7 @@ defined('_JEXEC') or die();
  * echo $css4Min->render()
  *
  * The returned string should be echoed in your output where the scripts or styles declarations should go.
- * since page caching may be enabled, the url inserted must be that of the uncompressed file, or the optional loader 
+ * since page caching may be enabled, the url inserted must be that of the uncompressed file, or the optional loader
  * script which serves the right file depending on the browser.
  *
  * render() will check if a cache file exists or generate a cache file
@@ -76,26 +76,26 @@ defined('_JEXEC') or die();
  *
  * Create a list of files as it compresses them to make sure we don't add the same file twice: while this may break
  * your layout, it's for sure an indication of an issue.
- * 
+ *
  * Log <!-- message always on error, or if isdebug is true.
  *
  * CREDITS
- * 
+ *
  * Riccardo Zorn, main idea and development
- * 
+ *
  * This work was made possible also by the articles and code of:
- * 
+ *
  * The urlrewriter class from the Minify project http://code.google.com/p/minify/ (which is included in a slightly modified form to suit the project)
  * Reinhold Weber' approach http://reinholdweber.com as published on http://www.catswhocode.com/blog/3-ways-to-compress-css-files-using-php
  * CSS and Javascript Combinator 0.5 Copyright 2006 by Niels Leenheer http://rakaz.nl/code/combine
  * Lee Willis's article (for mod_rewrite rules) http://www.leewillis.co.uk/gzip-joomla-tips-faster-website/
  * Mark Nottingham http://www.mnot.net/cache_docs/
- * 
+ *
  * The following libraries / scripts / regexprs are available to use through the configuration of the plugin:
- * 
+ *
  * Packer (javascript packer) by Dean Edwards http://joliclic.free.fr/php/javascript-packer/en/
  * James Padosley http://james.padolsey.com/javascript/javascript-comment-removal-revisted/
- * RockJock http://razorsharpcode.blogspot.it/2010/02/lightweight-javascript-and-css.html 
+ * RockJock http://razorsharpcode.blogspot.it/2010/02/lightweight-javascript-and-css.html
  */
 
 //defined('DS') || define('DS',DIRECTORY_SEPARATOR); // make things easier if you're not using joomla!
@@ -104,7 +104,7 @@ defined('DS') || define('DS',"/"); // make things easier if you're not using joo
 require_once("UriRewriter.php");
 
 class Css4Min {
-	
+
 	// 	examples	// 	normal							| site home in subfolder
 	//  site url:	// 	http://mysite.com				| http://mysite.com/johnny
 	//--------------//----------------------------------+-------------------------
@@ -128,11 +128,11 @@ class Css4Min {
 	var $arraykeys = array('scripts','styleSheets');
 	var $errorCount;
 	var $excludeFiles=array(); // files which should be skipped when inlining
-	
+
 	var $pro=false;
 	var $resource_package;
-	
-	
+
+
 	function Css4Min() {
 		$this->message = "";
 		$this->siteroot = dirname(dirname(__FILE__));
@@ -140,14 +140,14 @@ class Css4Min {
 			$this->siteroot = dirname($this->siteroot);
 		}
 		$this->wwwroot = $this->siteroot;
-		
+
 		if ( !isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on' ) {
 			$this->siteurl = 'http://'.$_SERVER['SERVER_NAME'].($_SERVER['SERVER_PORT']=='80' ? '' : ':'.$_SERVER['SERVER_PORT']);
-		} 
+		}
 		else {
 			$this->siteurl = 'https://'.$_SERVER['SERVER_NAME'].($_SERVER['SERVER_PORT']=='443' ? '' : ':'.$_SERVER['SERVER_PORT']);
 		}
-		
+
 		$this->cachedir = "cache".DS."css4min";
 		$this->base = "";
 		$this->reset();
@@ -164,12 +164,12 @@ class Css4Min {
 
 	/**
 	 * Adds a file to the correct container
-	 * 
+	 *
 	 * @param string $file
 	 */
 	function addFile($file) {
 		$isCss = $this->isCss($file);
-		
+
 		$arraykey = $this->arraykeys[$isCss];
 		$mime = "text/".($isCss?'css':'javascript');
 		if ($isCss) {
@@ -178,17 +178,17 @@ class Css4Min {
 				$options = array('mime'=>'text/javascript', 'defer'=>false, 'async'=>false);
 			}
 		$this->debug("Adding $file to $arraykey");
-		$this->files[$arraykey][$file]=$options;	
+		$this->files[$arraykey][$file]=$options;
 	}
-	
+
 	/**
 	 *
-	 * @param an array of filenames, a comma separated list, or a joomla jdocument Head structure 
+	 * @param an array of filenames, a comma separated list, or a joomla jdocument Head structure
 	 * (see function makeJoomla() for a description).
 	 */
 	function addFiles(&$files) {
 		$this->reset();
-		
+
 		// Some initialization is necessary:
 		foreach ($this->arraykeys as $arraykey) {
 			$this->getCacheName($arraykey);
@@ -198,7 +198,7 @@ class Css4Min {
 			'removeComments'=>$this->removeComments,
 			'processJS'=>$this->processJS
 		);
-		
+
 		if (empty($files)) {
 			$this->addMessage("no params");
 			return false;
@@ -210,13 +210,13 @@ class Css4Min {
 			$this->error("Wrong params type: ".$files);
 			return false;
 		}
-			
+
 		if (count($files)==0) {
 			$this->error('No files added');
 			unset($this->files);
 			return false;
 		} else {
-			// I received an array, but I don't know if it's a joomla array or a file-only array: 
+			// I received an array, but I don't know if it's a joomla array or a file-only array:
 			// so first of all I'll transform it
 			if (array_key_exists('scripts',$files) || array_key_exists('script',$files) || array_key_exists('styleSheets',$files)) {
 				// this is already in joomla format
@@ -225,7 +225,7 @@ class Css4Min {
 				// I have to create an appropriate joomla file,
 				$this->makeJoomlaHead($files); // will fill $this->files
 			}
-			
+
 			// the array is (now) fine, let's see if the files exist
 			foreach ($this->arraykeys as $arraykey)
 				if (isset($this->files[$arraykey])) {
@@ -236,7 +236,7 @@ class Css4Min {
 						$file = str_replace($this->siteurl,"",$file);
 						// remove ?random=11; but only on local file inclusion: not on remote scripts which may need params.
 						//error_log('addFiles '.$file);
-						if ((($querypos = strpos($file,'?'))>0) // the file has a query string i.e. ?random=42  
+						if ((($querypos = strpos($file,'?'))>0) // the file has a query string i.e. ?random=42
 							&& ($this->isLocalAndStatic($file)) ) {
 							$oldfile = $file;
 							$file = substr($file,0,$querypos);
@@ -244,7 +244,7 @@ class Css4Min {
 							// now I need to replace the array key at $index
 							$thisArray = $this->files[$arraykey];
 							unset($thisArray[$oldfile]);
-							$thisArray =  
+							$thisArray =
 								array_slice($thisArray, 0, $index, true) +
 								array($file => $options) +
 								array_slice($thisArray, $index, count($thisArray)-$index, true);
@@ -261,13 +261,13 @@ class Css4Min {
 							}
 							if (!file_exists($fileName)) {
 								$this->error("css4min: File ignored: it does not exist ". $fileName);//$this->wwwroot.DS.$file);
-								
+
 								if ($this->isdebug>3) {
 									echo "<hr><h5 style='font-size:24px;background-color:red;color:black'>".join("<br>",explode("\n",$this->message))."</h5><hr>";
 								}
-								
+
 								return false; // il filtro dovrebbe esser fatto da fixhead?
-								
+
 								$thisArray = $this->files[$arraykey];
 								//$this->error(json_encode($thisArray));
 								unset($thisArray[$fileKey]);
@@ -283,10 +283,10 @@ class Css4Min {
 				}
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Return a joomla head structure from a list of files
 	 */
@@ -305,22 +305,22 @@ class Css4Min {
 	function getCacheName($arraykey) {
 		if ($arraykey=='scripts') {
 			$cachefilename = trim($this->cachenamejs);
-			$ext = "js";		
+			$ext = "js";
 		} else {
 			$cachefilename = trim($this->cachenamecss);
 			$ext = "css";
-		} 
-		
+		}
+
 		if (!empty($cachefilename))
 			return $cachefilename;
-			
+
 		$lastModified = 0;
 		$allPaths = "";
 		if (isset($this->files[$arraykey])) {
 			foreach ($this->files[$arraykey] as $file=>$options) {
 				$file = str_replace($this->siteurl,"",$file);
 				$file = preg_replace("/(\\?.*)$/","",$file);
-						
+
 				if ($this->isLocalAndStatic($file)) {
 					if (!$this->isExcluded($file)) {
 						$allPaths .= $file;
@@ -331,14 +331,14 @@ class Css4Min {
 		}
 		if ($lastModified==0) {
 			return $cachefilename = null;
-		} 
+		}
 		$suffix = $this->removeComments?"":"-full";
 		$cachefilename = $lastModified . '-' . md5($allPaths) . "$suffix.$ext";
 		if ($arraykey=='scripts') {
 			$this->cachenamejs = $cachefilename;
 		} else  {
 			$this->cachenamecss = $cachefilename;
-		} 
+		}
 		return $cachefilename;
 	}
 
@@ -348,7 +348,7 @@ class Css4Min {
 	function getCacheFilePath($arraykey) {
 		return $this->wwwroot . DS . $this->cachedir . DS . $this->getCacheName($arraykey);
 	}
-	
+
 	/**
 	 * Return the URI of the cache item i.e. http://example.com/cache/css4min/1312123123.js
 	 */
@@ -370,36 +370,36 @@ class Css4Min {
 		$this->createCacheFiles();
 		return $this->renderTags();
 	}
-	
+
 	/**
 	 * Function isLocalAndStatic: returns true if the file is local i.e. does not contain a protocol or the site url is local.
 	 */
 	function isLocalAndStatic($file) {
 		// be careful here, "//ajax.googleapis.com" is possible so don't check for true
-		$isLocal = 
+		$isLocal =
 			(
 					// not remote for sure:
-				(strpos($file,"//")===false) 
-			|| 
-					// not local file with domain name prepended 
-				(!empty($this->siteurl) 
-						&& (strpos($file,$this->siteurl)!==false) 
+				(strpos($file,"//")===false)
+			||
+					// not local file with domain name prepended
+				(!empty($this->siteurl)
+						&& (strpos($file,$this->siteurl)!==false)
 				)
 			);
 		if ($isLocal) {
 			// let's exclude scripts too:
-			// scripts must NOT contain php 
+			// scripts must NOT contain php
 			if (strpos($file,'.php')>0) {
 				$isLocal = false;
 			}
-			// or - but we're including this just in case of really really nasty coders 
+			// or - but we're including this just in case of really really nasty coders
 			// componentpath/something/? invoking an index.php in
 			// a subfolder of the component (i.e. cobalt was the one to pass this wonderful test!)
 			if (strpos($file, '/?')>0) {
 				$isLocal = false;
 			}
-			
-			// there could be a further exception: where ? is added to a folder... do we really 
+
+			// there could be a further exception: where ? is added to a folder... do we really
 			// want to waste precious processing time testing for this?
 			if ($querypos = strpos($file, '?')>0) {
 				$file = JPATH_BASE . '/' . substr($file, 0, $querypos);
@@ -415,10 +415,11 @@ class Css4Min {
 			// as time goes on, the coders never cease to surprise us:
 			// now a system plugin serves the css from a fake url /default/css.html
 			$ext = pathinfo($file,PATHINFO_EXTENSION);
-			if (empty(trim($ext))) {
+
+			if (trim($ext)=="") {
 				$isLocal = false;
 			} else if (! strpos(' .css .js ', $ext)) {
-				$isLocal = false; 
+				$isLocal = false;
 				// let's pretend it's not local, it could be the above:
 				// otherwise, it's just someone who served a css or js with the wrong extension,
 				// and we'll punish their disrespect for the conventions by not compressing their files.
@@ -426,7 +427,7 @@ class Css4Min {
 		}
 		return $isLocal;
 	}
-	
+
 	/**
 	 * Count the local items for a given key
 	 * @param $arraykey
@@ -455,7 +456,7 @@ class Css4Min {
 			$this->createCacheFiles();
 			$this->debug("<h5>joomla files (): ".count($files['styleSheets'])." styles/".count($files['scripts'])." scripts </h5>");
 			$this->debug("<h5>joomla css4min->files (): ".count($this->files['styleSheets'])." styles/".count($this->files['scripts'])." scripts </h5>");
-			
+
 			//$this->debug();
 			/* the structure is:
 			 * scripts: $head['scripts'][] = array("path/scriptname.js"=>array("mime"=> "text/javascript"));
@@ -463,31 +464,31 @@ class Css4Min {
 			 */
 			return $this->files;
 		}
-		else 
+		else
 			return $files;
 	}
-	
+
 	function isCss($file) {
 		return pathinfo($file,PATHINFO_EXTENSION)=='css';
 	}
-	
+
 	function renderTags() {
 		$tags = "";
 		foreach ($this->arraykeys as $arraykey) {
 			foreach($this->files[$arraykey] as $file=>$options) {
-				if ($this->isCss($file)) { 			
+				if ($this->isCss($file)) {
 					$tags .= sprintf('<link rel="stylesheet" href="'.$file.'"/>'."\n");
 				} else {
-					$tags .= sprintf('<script type="text/javascript" src="'.$file.'"></script>'."\n");				
+					$tags .= sprintf('<script type="text/javascript" src="'.$file.'"></script>'."\n");
 				}
 			}
 		}
 		if (($this->isdebug>1) && $this->message) {
 			return "<!-- Css4Min messages: ".$this->message." -->\n" . $tags;
-		} else 
+		} else
 		return $tags;
 	}
-	
+
 	/**
 	 * Create cache files for the pro package (removing the files therein),
 	 * then proceed to creating cache files for the scripts and stylesheets.
@@ -501,17 +502,17 @@ class Css4Min {
 			if ($this->countItems('styleSheets'))
 				$this->createCacheFile('styleSheets');
 	}
-	
+
 	/**
 	 * remove files that are already in the package
 	 * insert the package in place of the first instance
 	 *  oPTION: BUT NOT NECESSARY:
-	 * compress the package by creating two extra keys: scriptsMain and styleSheetsMain 
+	 * compress the package by creating two extra keys: scriptsMain and styleSheetsMain
 	 * where Main = group name, in the future we may support multiple package groups.
 	 * No in realtà forse c'è un modo migliore. Staccare la compressione dalla struttura.
 	 * Cioè passare i due array alla compressione, senza che la compressione debba preoccuparsi
 	 * di cosa si tratta!
-	 * 
+	 *
 	 */
 	static $package_added=false;
 	protected function createProPackage() {
@@ -521,25 +522,25 @@ class Css4Min {
 			 */
 			$this->packageToGroups();// add the new keys based on the group;
 			// @ TODO copy package files to a proper structure and create the cachefiles
-			//$this->stripFilesInPackage(); 
+			//$this->stripFilesInPackage();
 		}
 	}
-	
+
 	protected function packageToGroups() {
 		if (!empty($this->resource_package)) {
 			foreach($this->resource_package as $group=>$package) {
 				$g = new stdClass();
 				$g->used = false;
 				$g->compressedStyles = ''; // the filename of the compressed file
-				$g->compressedScripts = ''; 
+				$g->compressedScripts = '';
 				$this->groups[$group] = $g;
 			}
 		}
 	}
-	
+
 	/**
-	 * Parses the files list and if files are local, 
-	 * - remove them from the list 
+	 * Parses the files list and if files are local,
+	 * - remove them from the list
 	 * - compress/minify them.
 	 * - add to the list the filename of the compressed version
 	 */
@@ -558,18 +559,18 @@ class Css4Min {
 			}
 			// since the folder wasn't there, let's copy the .htaccess and index.html
 			//and copy the .htaccess if it's not there:
-			
+
 // 			2014/10/28: admintools writes an incompatible .htaccess that conflicts with ours.
-// 				this is a seriuos issue, as our .htaccess contains instructions that 
-// 				tell browsers to grab the compressed files, and breaks the 
+// 				this is a seriuos issue, as our .htaccess contains instructions that
+// 				tell browsers to grab the compressed files, and breaks the
 // 				layout if it's not there;
-						
+
 // 			if (!copy(dirname(__FILE__).DS.'htaccess_sample',dirname($cachepath)."/.htaccess")) {
 // 					$this->error('Cannot copy '.dirname(__FILE__).DS.'htaccess_sample to '.dirname($cachepath)."/.htaccess");
 // 				}
 			file_put_contents(dirname($cachepath)."/index.html", "<!doctype html>");
 		}
-		
+
 		// if the file was already cached, serve it
 		if (file_exists($cachepath)) {
 			$itemCount = 0;
@@ -586,41 +587,41 @@ class Css4Min {
 			Minifier::URIRewriterInit();
 			$this->initBuffer();
 
-			
+
 			foreach($this->files[$arraykey] as $file=>$options) {
 				// this is the main processing function
 				if ($this->isLocalAndStatic($file)) {
 					if (!$this->isExcluded($file)) {
 						if ($this->addToBuffer($file)) { // krz here add the media,screen,print keys
 							unset($this->files[$arraykey][$file]);
-						} 
+						}
 						else {
 							// we try to make it clear there was a serious error:
 							$this->error("There was a blocking error processing $file");
 							if ($this->isdebug>1) {
 								$this->error($this->message);
-							} 
+							}
 						}
 					}
 				}
 			}
-			
+
 			// $this->URIRewriterGetImports(); is invoked by saveBuffer!
-				
+
 			// will return false also on empty buffer
 			if ($this->saveBuffer($arraykey)) {
 				$this->addFile($cachefile);
-			} 
+			}
 		}
 		//$this->debug( "<h5>//Create cache file: ".count($this->files['styleSheets'])." styles/".count($this->files['scripts'])." scripts </h5>");
-		
+
 	}
 	/**
 	 *  performs initialization
 	 */
 	function initBuffer() {
 		$this->buffer = "";
-	
+
 	}
 	/**
 	 * Loads the file, minifies it, appends it to $buffer and returns
@@ -629,21 +630,21 @@ class Css4Min {
 	 * Check the $message.
 	 * @param $file
 	 */
-	
+
 	protected function addToBuffer($file) {
 		$tmpContent = "";
 		$this->addMessage ("inlining file $file");
 		$file = str_replace($this->siteurl,"",$file);
 		// if the url contains "//" - and it's not the local siteurl because we replaced it in addFiles
-		
+
 		if (!$this->isLocalAndStatic($file)) {
 			$this->debug ("Css4Min Will not inline remote resource: $file (siteurl:".$this->siteurl.")");
 			return false;
-		} 
+		}
 		else if (Minifier::renderResource($tmpContent, $file)) {
 			$this->buffer .= $tmpContent;
-			return true; 
-		} else { 
+			return true;
+		} else {
 			// execution should never be here, since we're checking for file existance in addFiles()
 			$this->error("addToBuffer Could not open file $file.\n".$tmpContent);
 			if ($this->isdebug>3) {
@@ -653,7 +654,7 @@ class Css4Min {
 		}
 	}
 	/**
-	 * Check the $excludedFiles array to see if this file was excluded in the options: 
+	 * Check the $excludedFiles array to see if this file was excluded in the options:
 	 * beware: Only a part of the filename is sufficient to exclude it.
 	 * @param  $file
 	 */
@@ -669,13 +670,13 @@ class Css4Min {
 		if (strpos($file,$this->cachedir)!==false) {
 			return true;
 		}
-			
+
 		return false;
 	}
-	
+
 	/**
 	 * writes the file to disk
-	 * it also compresses the file 
+	 * it also compresses the file
 	 */
 	protected function saveBuffer($arraykey) {
 		$this->debug( "SaveBuffer $arraykey ".count($this->buffer)."");
@@ -685,14 +686,14 @@ class Css4Min {
 		if (empty($this->buffer) || $this->buffer == "\n") {
 			return false;
 		} else {
-			// write the file 
+			// write the file
 			$cachefile = $this->getCacheFilePath($arraykey);
 			if ($f = fopen($cachefile,'wb')) {
 				fwrite($f, $this->buffer);
 				fclose($f);
 				//unset($this->buffer);
-				
-				// now compress 
+
+				// now compress
 				if ($f = fopen($cachefile."gz",'wb')) {
 					fwrite($f, gzencode($this->buffer,9));
 					fclose($f);
@@ -721,7 +722,7 @@ class Css4Min {
 		$this->addMessage('ERROR:'.$msg);
 		$this->errorCount++;
 	}
-	
+
 	function debug($msg='') {
 		if (!empty($msg)) {
 			//echo "<h5>DEBUG msg $msg</h5>";
@@ -730,20 +731,20 @@ class Css4Min {
 		}
 		if ($this->isdebug<3) {
 			return;
-		} 
-		
+		}
+
 		// just output some vars:
 		echo "<ul><li>files:";
 		echo "<ul class='green'>";
-		foreach($this->arraykeys as $arraykey) {	
-			if (count($this->files[$arraykey] )==0)  
+		foreach($this->arraykeys as $arraykey) {
+			if (count($this->files[$arraykey] )==0)
 				echo "<li>no files in $arraykey";
-			else 
+			else
 				foreach ($this->files[$arraykey] as $file=>$options) {
 					echo "<li>$arraykey: $file";
 				}
 		}
-		
+
 		echo "</ul>";
 		echo "<li>siteroot:".$this->siteroot;
 		echo "<ul class='blue'>";
@@ -762,11 +763,11 @@ class Css4Min {
 
 class Minifier {
 	public static $options = array();
-	
+
 	static function renderResource(&$tmpContent,$fileName) {
 		$fileName = preg_replace('/\?.*$/','',$fileName);
 		self::$options['filetype'] = pathinfo($fileName,PATHINFO_EXTENSION);
-		if (strpos($fileName,'.php?')>0) { 
+		if (strpos($fileName,'.php?')>0) {
 			//$filename= substr($filename,0,strpos($filename,'?'));
 			return false;
 		}
@@ -774,29 +775,29 @@ class Minifier {
 			$tmpContent .= "\n";
 		} else {
 			$errorMessage = "Css4Min Minifier\nERROR: could not open ".self::$options['wwwroot'] . DS . ltrim($fileName,DS);
-			// krz : this is a blocking error and it should be output somehow. 
+			// krz : this is a blocking error and it should be output somehow.
 			/*if (self::$options['filetype']=='js')
 				$tmpContent=";alert('".$errorMessage."');";
-			else 
+			else
 				$tmpContent = "\n body:first-child {content:'".$errorMessage."'}\n";*/
 			$tmpContent = $errorMessage;
 			return false;
 		}
-		
+
 		if (self::isCss()) {
 			self::removeCharset($tmpContent);
 		}
-		
-		// remove comments can be done with several methods, all very partial or failing but still so much faster 
+
+		// remove comments can be done with several methods, all very partial or failing but still so much faster
 		// than using a parser.
 		if (self::$options['removeComments']) {
 			$tmpContent = self::removeComments($tmpContent);
-			 
+
 		} else {
 			$tmpContent = "\n/*   Begin inline by Css4Min from $fileName ****/\n".
 				$tmpContent . "\n/*   End inline $fileName */ \n";
 		}
-			
+
 		if (self::isCss()) {
 			self::rewriteUrls($tmpContent, $fileName);
 		}
@@ -805,9 +806,9 @@ class Minifier {
 		return true;
 	}
 	/**
-	 * http://razorsharpcode.blogspot.it/2010/02/lightweight-javascript-and-css.html 
+	 * http://razorsharpcode.blogspot.it/2010/02/lightweight-javascript-and-css.html
 	 * by rockjock
-	 * 
+	 *
 	 * */
 	static function removeComments_rockjock_minify($_src) {
 		 // Buffer output
@@ -902,43 +903,43 @@ class Minifier {
 		 $_out=ob_get_contents();
 		 ob_end_clean();
 		 return $_out;
-	} 
-	
+	}
+
 	/**
-	 * Remove comments by 
+	 * Remove comments by
 	 * http://james.padolsey.com/javascript/javascript-comment-removal-revisted/
 	 * @param unknown_type $buffer
 	 */
 	static function removeComments_padolsey(&$buffer) {
-		
+
 		$buffer = preg_replace('/\/\/.*?\/?\*.+?(?=\n|\r|$)|\/\*[\s\S]*?\/\/[\s\S]*?\*\//','',$buffer);
 		$buffer = preg_replace('/\/\/.+?(?=\n|\r|$)|\/\*[\s\S]+?\*\//','',$buffer);
 		return $buffer;
 	}
-	
+
 	/**
 	 * It is indeed quite difficult to strip comments from js.
 	 * This is a very limited approach, which deliberately skips some comments
 	 * (those that contain "/") = 80% of them,
 	 * but still better than nothing. Try with krz: preg_replace_callback
-	 */ 
+	 */
 	static function removeComments_safe(&$buffer) {
 		// spaces at the beginning of a line
 		$buffer = preg_replace('/^[ \t]*/m','',$buffer);
-		// multiline doc comments /** */		
+		// multiline doc comments /** */
 		$buffer = preg_replace('!/\*\*.*?\*/!s','',$buffer);
-		// multiline standard /* */ 
+		// multiline standard /* */
 		$buffer = preg_replace('!/\*[^/]*?\*/!s','',$buffer);
 		// CAUTION: I'm still keeping all comments with "/" inside, i.e. all which contain urls
 		return $buffer;
-		
+
 		/*
 		 * The implementation cannot proceed to single-line parsing because I can't get rid of multiline comments properly yet.
 		 *  so it turns out I can't remove /* comments yet (it breaks!!!)
 		 */
-		
+
 		$buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
-	    		
+
     	$newBuffer = "";
     	$buffer = str_replace("\n","\r",$buffer);
 
@@ -946,9 +947,9 @@ class Minifier {
     		$curline = trim($line," \t");
     		if (empty($curline)) {}
     		else if ( (strpos($curline,'//')===0)) {
-    			// if it's 0, it's a comment we wish to strip; 
+    			// if it's 0, it's a comment we wish to strip;
     			// if it's > 0, the comment starts at mid-line and it's not so easy to remove it (could also be inside a string)
-    			
+
     		} else {
     			// so it's not a comment; let's see if I like the last character of the string:
     			$lastChar = $curline[strlen($curline)-1];
@@ -960,7 +961,7 @@ class Minifier {
     			//krz
     			// this should be strpos(',{};' which could all be followed by another statement;
     			// alas it doesn't work :-( will have to figure out why
-    			if (strpos('{',$lastChar)===false) 
+    			if (strpos('{',$lastChar)===false)
     				$newBuffer .= $curline."\r";
     			else
     				$newBuffer .= $curline;
@@ -978,9 +979,9 @@ class Minifier {
 		$buffer = $packer->pack();
 		return $buffer;
 	}
-	
+
 	/** Main removeComments:
-	 * 
+	 *
 	 * CSS  is handled nicely.
 	 * JS is  a bit problematic; there are a bunch of solutions possible, but their effectiveness depends
 	 * on the scripts used,   hence we leave it to you to decie.
@@ -988,10 +989,10 @@ class Minifier {
 	 */
 	static function removeComments(&$buffer) {
 		$buffer = preg_replace("/[\t ]+/", ' ', $buffer);
-			
+
 	    if (self::isCss()) {
 			$buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
-	    	// newline does not mean anything in css, so I can strip it. 
+	    	// newline does not mean anything in css, so I can strip it.
 	    	$buffer = str_replace(array("\r\n", "\r", "\n", "\t"), '', $buffer);
 	    	return $buffer;
 	    }
@@ -1016,38 +1017,38 @@ class Minifier {
 	    	}
 	    }
  	}
- 	 
+
  	/*
- 	 * Stylesheets often have a @CHARSET="UTF-8"; header which we do not wish to duplicate; 
- 	 * currently, we're just throwing all away. 
+ 	 * Stylesheets often have a @CHARSET="UTF-8"; header which we do not wish to duplicate;
+ 	 * currently, we're just throwing all away.
  	 * */
  	static function removeCharset(&$buffer) {
  		$buffer = preg_replace('/@CHARSET\\s+.*["\']UTF-8["\']\\s*;/','', $buffer);
  	}
- 	
- 	/** 
+
+ 	/**
  	 * Wrapper for Css4Min_Minify_CSS_UriRewriter::rewrite
  	 * @param $buffer
  	 * @param $file
  	 */
  	static function rewriteUrls(&$buffer, $file) {
  		$buffer = Css4Min_Minify_CSS_UriRewriter::rewrite($buffer,dirname(self::$options['wwwroot'].DS.$file),self::$options['wwwroot']);
- 		if (false) // this will echo debug info from minify_CSS_UriRewriter 
+ 		if (false) // this will echo debug info from minify_CSS_UriRewriter
  			echo "<h2>Rewrite results:</h2>".join("<br>",explode("\n",Css4Min_Minify_CSS_UriRewriter::$debugText))."<br>";
- 	} 
+ 	}
  	/**
  	 * Wrapper for Css4Min_Minify_CSS_UriRewriter::init
  	 */
  	static function URIRewriterInit() {
  		return Css4Min_Minify_CSS_UriRewriter::init();
- 	}	
+ 	}
  	/**
  	 * Wrapper for Css4Min_Minify_CSS_UriRewriter::getImports
  	 */
  	static function URIRewriterGetImports() {
  		return Css4Min_Minify_CSS_UriRewriter::getImports();
  	}
- 	/** 
+ 	/**
  	 * I'm lazy so I like my functions to be meaningful.
  	 */
 	static function isCss() {

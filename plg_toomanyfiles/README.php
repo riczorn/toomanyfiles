@@ -121,3 +121,8 @@ Version 1.7.0 (2015-12-12)
 	and the single noConflict() call is added right after jQuery if added.
 	The new setting's default value is 'Leave as Is' for legacy compatibility.
 
+Version 1.7.2 (2016-04-18)
+*   <b>Restored legacy PHP compatibility</b>
+	Now compatible with 5.3.10+
+
+
