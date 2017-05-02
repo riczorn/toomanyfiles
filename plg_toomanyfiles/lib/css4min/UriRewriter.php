@@ -473,7 +473,7 @@ class Css4Min_Minify_CSS_UriRewriter {
             */
     }
     public static function testURIs($linesArr) {
-
+        // never invoked why is this here?
     }
 
     public static function init() {

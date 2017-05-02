@@ -7,7 +7,7 @@
 	<license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>
 	<authorEmail>support@fasterjoomla.com</authorEmail>
 	<authorUrl>www.fasterjoomla.com</authorUrl>
-	<version>1.7.2</version>
+	<version>1.7.3</version>
 	<description>PLG_SYSTEM_TOOMANYFILES_XML_DESCRIPTION</description>
 	<files>
 		<filename plugin="toomanyfiles">toomanyfiles.php</filename>
@@ -51,14 +51,14 @@
 
 				<field type="spacer" name="scriptsincludelibraries"
 					label="PLG_2MANY_SEPARATOR_INCLUDE_LIBRARIES_LABEL" description="PLG_2MANY_SEPARATOR_INCLUDE_LIBRARIES_DESC" />
-			
+
 				<field name="modernizr" type="list" default="1"
 					label="PLG_2MANY_FIELD_MODERNIZR_LABEL" description="PLG_2MANY_FIELD_MODERNIZR_DESC"
 					filter="integer">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				
+
 				<field name="script_mootools_core" type="zzlibrary" default="0"
 					label="PLG_2MANY_FIELD_MOOTOOLS_CORE_LABEL" description="PLG_2MANY_OPTION_LIBRARIES_DESC"
 					filter="raw" directory="/media/system/js/" filefilter="mootools-core.*">
@@ -71,7 +71,7 @@
 						<option value="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js" />
 					</group>
 				</field>
-				
+
 				<field name="script_mootools_more" type="zzlibrary" default="0"
 					label="PLG_2MANY_FIELD_MOOTOOLS_MORE_LABEL" description="PLG_2MANY_OPTION_LIBRARIES_DESC"
 					filter="raw" directory="/media/system/js/" filefilter="mootools-more.*">
@@ -93,8 +93,8 @@
 					<group value="local" label="PLG_2MANY_GROUP_LOCAL">
 					</group>
 					<group value="cdn" label="PLG_2MANY_GROUP_CDN">
-						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.js" />
-						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" />
+						<option value="//ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.js" />
+						<option value="//ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js" />
 					</group>
 				</field>
 
@@ -103,9 +103,9 @@
 					<option value="-1">JTOOLBAR_REMOVE</option>
 					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
 					<option value="1">PLG_2MANY_OPTION_ADD</option>
-					
+
 				</field>
-				
+
 				<field name="script_jquery_ui" type="zzlibrary" default="0"
 					label="PLG_2MANY_FIELD_JQUERY_UI_LABEL" description="PLG_2MANY_OPTION_LIBRARIES_DESC"
 					filter="raw" directory="js/" filefilter="jquery-ui.*">
@@ -114,8 +114,8 @@
 					<group value="local" label="PLG_2MANY_GROUP_LOCAL">
 					</group>
 					<group value="cdn" label="PLG_2MANY_GROUP_CDN">
-						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery-ui.js" />
-						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery-ui.min.js" />
+						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.12.1/jquery-ui.js" />
+						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.12.1/jquery-ui.min.js" />
 					</group>
 				</field>
 			</fieldset>
@@ -161,7 +161,7 @@
 				</field>
 
 				<field type="spacer" name="excludex" label="&lt;/li&gt;&lt;/ul&gt;" />
-				
+
 				<field type="spacer" name="exclude"
 					label="PLG_2MANY_SEPARATOR_EXCLUSION_LABEL" />
 
@@ -173,7 +173,7 @@
 					<option value="guests_reg_admin">PLG_2MANY_FIELD_ENABLED_USERS_ALL</option>
 					<option value="admin">PLG_2MANY_FIELD_ENABLED_USERS_ADMINS</option>
 				</field>
-				
+
 				<!-- field name="script_mootools_enabled_logged_in" type="list" default="0"
 					label="PLG_2MANY_FIELD_MOOTOOLS_ENABLED_LOGGEDIN" description="PLG_2MANY_FIELD_MOOTOOLS_EXTRAS_DESC"
 					filter="integer">
@@ -199,15 +199,15 @@
 					<option value="-1">JTOOLBAR_REMOVE</option>
 					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
 				</field-->
-				
+
 				<field name="compress_remove_comments" type="list" default="1"
 					label="PLG_2MANY_FIELD_COMPRESS_REMOVE_COMMENTS_LABEL" description="PLG_2MANY_FIELD_COMPRESS_REMOVE_COMMENTS_DESC"
 					filter="integer">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				
-				
+
+
 				<field name="exclude_components" type="textarea" default=""
 					label="PLG_2MANY_FIELD_COMPRESS_EXCLUDE_COMPONENTS_LABEL"
 					description="PLG_2MANY_FIELD_COMPRESS_EXCLUDE_COMPONENTS_DESC"

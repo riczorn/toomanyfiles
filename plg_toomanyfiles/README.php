@@ -122,7 +122,9 @@ Version 1.7.0 (2015-12-12)
 	The new setting's default value is 'Leave as Is' for legacy compatibility.
 
 Version 1.7.2 (2016-04-18)
-*   <b>Restored legacy PHP compatibility</b>
-	Now compatible with 5.3.10+
+	*   <b>Restored legacy PHP compatibility</b>
+		Now compatible with 5.3.10+
 
-
+Version 1.7.3 (2017-05-02)
+  * Updated jQuery libraries
+	
