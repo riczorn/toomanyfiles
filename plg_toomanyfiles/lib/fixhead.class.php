@@ -30,7 +30,7 @@ class FixHead {
 	 * 
 	 * @param $plugin
 	 */
-	function FixHead(&$plugin) {
+	public function __construct(&$plugin) {
 		$this->document = JFactory::getDocument();
 		
 		$this->params = $plugin->params;
@@ -873,14 +873,20 @@ class FixHead {
 		if (isset($container['styleSheets'] )) {
 			foreach ($container['styleSheets'] as $strSrc => $strAttr)
 			{
-				$buffer .= $tab . '<link rel="stylesheet" href="' . $strSrc . '" type="' . $strAttr['mime'] . '"';
-				if (!is_null($strAttr['media']))
+			    $buffer .= $tab . '<link rel="stylesheet" href="' . $strSrc . '"';
+			    
+			    if (isset($strAttr['mime'])) {
+			        $buffer .= ' type="' . $strAttr['mime'] . '"';
+			    }
+			    if (isset($strAttr['media']))
 				{
 					$buffer .= ' media="' . $strAttr['media'] . '" ';
 				}
-				if ($temp = JArrayHelper::toString($strAttr['attribs']))
-				{
-					$buffer .= ' ' . $temp;
+				if (isset($strAttr['attribs'])) {
+    				if ($temp = JArrayHelper::toString($strAttr['attribs']))
+    				{
+    					$buffer .= ' ' . $temp;
+    				}
 				}
 				$buffer .= $tagEnd . $lnEnd;
 			}
@@ -915,15 +921,15 @@ class FixHead {
 			foreach ($container['scripts'] as $strSrc => $strAttr)
 			{
 				$buffer .= $tab . '<script src="' . $strSrc . '"';
-				if (!is_null($strAttr['mime']))
+				if (isset($strAttr['mime']))
 				{
 					$buffer .= ' type="' . $strAttr['mime'] . '"';
 				}
-				if ($strAttr['defer'])
+				if (isset($strAttr['defer']))
 				{
 					$buffer .= ' defer="defer"';
 				}
-				if ($strAttr['async'])
+				if (isset($strAttr['async']))
 				{
 					$buffer .= ' async="async"';
 				}

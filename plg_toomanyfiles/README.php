@@ -128,3 +128,7 @@ Version 1.7.2 (2016-04-18)
 Version 1.7.3 (2017-05-02)
   * Updated jQuery libraries
 	
+Version 1.7.4 (2018-01-09)
+  * Removed notices and fixed configuration
+  
+ 	

@@ -133,7 +133,7 @@ class Css4Min {
 	var $resource_package;
 
 
-	function Css4Min() {
+	public function __construct() {
 		$this->message = "";
 		$this->siteroot = dirname(dirname(__FILE__));
 		while ($this->siteroot && !file_exists($this->siteroot."/configuration.php")) {
