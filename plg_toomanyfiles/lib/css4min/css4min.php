@@ -679,7 +679,11 @@ class Css4Min {
 	 * it also compresses the file
 	 */
 	protected function saveBuffer($arraykey) {
-		$this->debug( "SaveBuffer $arraykey ".count($this->buffer)."");
+		if ($this->buffer instanceof Countable) {
+			$this->debug( "SaveBuffer $arraykey ".count($this->buffer)."");
+	    } else {
+			$this->debug( "SaveBuffer $arraykey - buffer is not Countable");
+		}
 		$this->buffer =
 			join("\n",Minifier::URIRewriterGetImports()) ."\n".
 			trim($this->buffer);
