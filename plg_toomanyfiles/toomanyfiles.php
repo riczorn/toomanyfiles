@@ -57,7 +57,9 @@ class plgSystemTooManyFiles extends JPlugin
 		if ($this->isAllowed()) {
 			if ($this->fixHead) {
 				
-	 			$body = JResponse::getBody();
+				 //$body = JResponse::getBody();
+				 // j4fix: 
+				 $body = JApplicationWeb::getBody();
 	 			
 	 			// Here I have the chance to pick up all leftover resources which never entered the JDocument Headers.
 	 			$this->fixHead->moveScripts($body);
@@ -73,7 +75,7 @@ class plgSystemTooManyFiles extends JPlugin
 				);
 	 			
 	 			$body = str_replace($find,$replace,$body);
-				JResponse::setBody($body);
+				JApplicationWeb::setBody($body);
 			}
 		}
 	}
