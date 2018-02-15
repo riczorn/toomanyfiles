@@ -7,7 +7,7 @@
 	<license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>
 	<authorEmail>support@fasterjoomla.com</authorEmail>
 	<authorUrl>www.fasterjoomla.com</authorUrl>
-	<version>1.7.4</version>
+	<version>1.7.5</version>
 	<description>PLG_SYSTEM_TOOMANYFILES_XML_DESCRIPTION</description>
 	<files>
 		<filename plugin="toomanyfiles">toomanyfiles.php</filename>
@@ -42,8 +42,9 @@
 					</option>
 				</field>
 
-				<field name="scripts_usecompressed" type="list" default="1"
+				<field name="scripts_usecompressed" type="radio" default="1"
 					label="PLG_2MANY_FIELD_SCRIPTS_USECOMPRESSED_LABEL" description="PLG_2MANY_FIELD_SCRIPTS_USECOMPRESSED_DESC"
+					class="btn-group btn-group-yesno" 
 					filter="integer">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
@@ -52,9 +53,10 @@
 				<field type="spacer" name="scriptsincludelibraries"
 					label="PLG_2MANY_SEPARATOR_INCLUDE_LIBRARIES_LABEL" description="PLG_2MANY_SEPARATOR_INCLUDE_LIBRARIES_DESC" />
 
-				<field name="modernizr" type="list" default="1"
+				<field name="modernizr" type="radio" default="0"
 					label="PLG_2MANY_FIELD_MODERNIZR_LABEL" description="PLG_2MANY_FIELD_MODERNIZR_DESC"
-					filter="integer">
+					filter="integer"
+					class="btn-group btn-group-yesno" >
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
@@ -67,8 +69,8 @@
 					<group value="local" label="PLG_2MANY_GROUP_LOCAL">
 					</group>
 					<group value="cdn" label="PLG_2MANY_GROUP_CDN">
-						<option value="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools.js" />
 						<option value="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js" />
+						
 					</group>
 				</field>
 
@@ -80,8 +82,7 @@
 					<group value="local" label="PLG_2MANY_GROUP_LOCAL">
 					</group>
 					<group value="cdn" label="PLG_2MANY_GROUP_CDN">
-						<option value="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools.js" />
-						<option value="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js" />
+						<!--option value="//ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-more-yui-compressed.js" /-->
 					</group>
 				</field>
 
@@ -93,8 +94,9 @@
 					<group value="local" label="PLG_2MANY_GROUP_LOCAL">
 					</group>
 					<group value="cdn" label="PLG_2MANY_GROUP_CDN">
-						<option value="//ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.js" />
+						<option value="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" />
 						<option value="//ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js" />
+						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" />
 					</group>
 				</field>
 
@@ -114,10 +116,22 @@
 					<group value="local" label="PLG_2MANY_GROUP_LOCAL">
 					</group>
 					<group value="cdn" label="PLG_2MANY_GROUP_CDN">
-						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.12.1/jquery-ui.js" />
-						<option value="//ajax.googleapis.com/ajax/libs/jquery/1.12.1/jquery-ui.min.js" />
+						<option value="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" />
 					</group>
 				</field>
+
+				<field name="script_jquery_migrate" type="zzlibrary" default="0"	
+					label="PLG_2MANY_FIELD_JQUERY_MIGRATE_LABEL" description="PLG_2MANY_OPTION_LIBRARIES_DESC"
+					filter="raw" directory="js/" filefilter="jquery-migrate.*">
+					<option value="-1">JTOOLBAR_REMOVE</option>
+					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
+					<group value="local" label="PLG_2MANY_GROUP_LOCAL">
+					</group>
+					<group value="cdn" label="PLG_2MANY_GROUP_CDN">
+						<option value="//code.jquery.com/jquery-migrate-1.4.1.min.js" />
+					</group>
+				</field>
+				
 			</fieldset>
 			<fieldset name="advanced">
 
@@ -138,15 +152,17 @@
 					</option>
 				</field>
 
-				<field name="compress_css" type="list" default="1"
+				<field name="compress_css" type="radio" default="1"
 					label="PLG_2MANY_FIELD_COMPRESS_CSS_LABEL" description="PLG_2MANY_FIELD_COMPRESS_CSS_DESC"
+					class="btn-group btn-group-yesno" 
 					filter="integer">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
 
-				<field name="compress_remove_comments" type="list" default="1"
+				<field name="compress_remove_comments" type="radio" default="1"
 					label="PLG_2MANY_FIELD_COMPRESS_REMOVE_COMMENTS_LABEL" description="PLG_2MANY_FIELD_COMPRESS_REMOVE_COMMENTS_DESC"
+					class="btn-group btn-group-yesno" 
 					filter="integer">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
@@ -200,8 +216,9 @@
 					<option value="0">PLG_2MANY_OPTION_DEFAULT</option>
 				</field-->
 
-				<field name="compress_remove_comments" type="list" default="1"
+				<field name="compress_remove_comments" type="radio" default="1"
 					label="PLG_2MANY_FIELD_COMPRESS_REMOVE_COMMENTS_LABEL" description="PLG_2MANY_FIELD_COMPRESS_REMOVE_COMMENTS_DESC"
+					class="btn-group btn-group-yesno" 
 					filter="integer">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>

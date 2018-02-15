@@ -131,4 +131,10 @@ Version 1.7.3 (2017-05-02)
 Version 1.7.4 (2018-01-09)
   * Removed notices and fixed configuration
   
- 	
+Version 1.7.5 (2018-02-14) 	
+  * Updated and tested cdn libraries
+  * Removed the option to download a non-minified version from the cdn (what's the point, really?)
+  * Added jQuery Migrate, leaving jQuery on 1.12.4 but 2.2.4 and 3.3.1 are available from the cdn.
+  Please note: it is strongly advised to enable jQuery Migrate if you see any issues on your site.
+
+

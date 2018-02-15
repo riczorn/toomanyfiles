@@ -50,8 +50,9 @@ class FixHead {
 		$user = JFactory::getUser();
 		$this->isGuest = ($user->guest);
 		
-		$jqversion = '1.11.1';
-		$jquiversion = '1.11.2';
+		$jqversion = '1.12.4';
+		$jquiversion = '1.12.1';
+		$jqmigversion = '1.4.1';
 		$mootoolsver = '1.4.5';
 		$modernizrver = '2.8.3';
 		
@@ -73,6 +74,13 @@ class FixHead {
 			'cdnmini'=>"//ajax.googleapis.com/ajax/libs/jqueryui/$jquiversion/jquery-ui.min.js",
 			'regexp'=>"jquery-ui[0-9\.\-]*(custom)?(\.min)?\.js"
 		),
+		"jquery_migrate"=>array(
+			'local'=>$plugindir."/js/jquery-migrate-$jqmigversion.js",
+			'localmini'=>$plugindir."/js/jquery-migrate-$jqmigversion.min.js",
+			'cdn'=>"//code.jquery.com/jquery-migrate-$jqmigversion.js",
+			'cdnmini'=>"//code.jquery.com/jquery-migrate-$jqmigversion.min.js",
+			'regexp'=>"jquery-migrate[0-9\.\-]*(custom)?(\.min)?\.js"
+		),
 		"noconflict"=>array(
 				'regexp'=>"jquery[-_\.]*noconflict([-_\.]min)?\.js",
 				'removeRegex'=>'%[>\n;][^;\n]*jQuery.noConflict[^<;\n]*[<;\n]%',
@@ -81,7 +89,9 @@ class FixHead {
 			'local'=>"/media/system/js/mootools-core-uncompressed.js",
 			'localmini'=>"/media/system/js/mootools-core.js",
 			'cdn'=>"//ajax.googleapis.com/ajax/libs/mootools/$mootoolsver/mootools.js",
+			// fino alla versione 1.5.1  mootools-yui-compressed
 			'cdnmini'=>"//ajax.googleapis.com/ajax/libs/mootools/$mootoolsver/mootools-yui-compressed.js",
+			// dalla versione 1.5.1 'cdnmini'=>"//ajax.googleapis.com/ajax/libs/mootools/$mootoolsver/mootools.min.js",
 			'dependencies'=>"core,mootools_more,jcaption,jtooltip,validate,keepalive",
 		),
 		"core"=>array(
@@ -337,7 +347,7 @@ class FixHead {
 	public function fix() {
 	    // it is important to have the inverse order for creating the top headers in the right order:
 	    // , if all libraries are enabled their order will be
-	    // jquery, jqueryui, mootoolscore, mootoolsmore
+	    // jquery, jqueryui, jquery-migrate, mootoolscore, mootoolsmore
 
 		
 	    //if ($this->isGuest || 
@@ -353,6 +363,7 @@ class FixHead {
 	    //}
 	    
 	    $this->fixHeadLibrary('jquery_ui');
+	    $this->fixHeadLibrary('jquery_migrate');
 	    $this->fixHeadLibrary('jquery');
 	    
 	    // noconflict library is just an extra download for a one-line javascript;
