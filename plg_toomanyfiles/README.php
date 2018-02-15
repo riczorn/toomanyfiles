@@ -137,4 +137,6 @@ Version 1.7.5 (2018-02-14)
   * Added jQuery Migrate, leaving jQuery on 1.12.4 but 2.2.4 and 3.3.1 are available from the cdn.
   Please note: it is strongly advised to enable jQuery Migrate if you see any issues on your site.
 
-
+Version 1.8.0 (2018-02-15)
+  * Tested against Joomla! 4.0.0-dev
+  
