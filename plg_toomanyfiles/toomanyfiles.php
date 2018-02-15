@@ -20,7 +20,7 @@ defined('_JEXEC') or die;
  * 1.2.9 2014-02-06:  Do not run at all if the user is logged in. This solves 99% of the previous issues.
  *
  */
-use Joomla\Utilities\ArrayHelper;
+
 if(version_compare(JVERSION,'4.0.0') < 0){
 	jimport('joomla.plugin.plugin');
 } else {
