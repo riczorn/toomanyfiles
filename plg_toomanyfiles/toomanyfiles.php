@@ -21,8 +21,12 @@ defined('_JEXEC') or die;
  *
  */
 
+if(version_compare(JVERSION,'4.0.0') < 0){
+	jimport('joomla.plugin.plugin');
+} else {
+	use Joomla\Utilities\ArrayHelper;
+}
 
-jimport('joomla.plugin.plugin');
 require_once(dirname(__FILE__) . "/lib/fixhead.class.php");
 
 /**
