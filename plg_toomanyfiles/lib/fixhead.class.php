@@ -895,7 +895,7 @@ class FixHead {
 					$buffer .= ' media="' . $strAttr['media'] . '" ';
 				}
 				if (isset($strAttr['attribs'])) {
-    				if ($temp = JArrayHelper::toString($strAttr['attribs']))
+    				if ($temp = ArrayHelper::toString($strAttr['attribs']))
     				{
     					$buffer .= ' ' . $temp;
     				}
