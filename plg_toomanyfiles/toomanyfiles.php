@@ -59,8 +59,9 @@ class plgSystemTooManyFiles extends JPlugin
 				
 				 //$body = JResponse::getBody();
 				 // j4fix: 
-				 $body = JApplicationWeb::getBody();
-	 			
+				// $body = JApplicationWeb::getBody();
+				 $appWeb = JFactory::getApplication(); //new JApplicationWeb
+				 $body = $appWeb->getBody();
 	 			// Here I have the chance to pick up all leftover resources which never entered the JDocument Headers.
 	 			$this->fixHead->moveScripts($body);
 	 			
@@ -74,8 +75,10 @@ class plgSystemTooManyFiles extends JPlugin
 					$this->fixHead->renderFoot()."</body>"
 				);
 	 			
-	 			$body = str_replace($find,$replace,$body);
-				JApplicationWeb::setBody($body);
+				 $body = str_replace($find,$replace,$body);
+				 
+				//JApplicationWeb::setBody($body);
+				$appWeb->setBody($body);
 			}
 		}
 	}
