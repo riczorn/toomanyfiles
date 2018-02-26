@@ -60,10 +60,8 @@ class plgSystemTooManyFiles extends JPlugin
 	function onAfterRender() {
 		if ($this->isAllowed()) {
 			if ($this->fixHead) {
-				
-				 //$body = JResponse::getBody();
-				 // j4fix: 
-				// $body = JApplicationWeb::getBody();
+				 // J3:     $body = JResponse::getBody();
+				 // j4 fix: $body = JApplicationWeb::getBody();
 				 $appWeb = JFactory::getApplication(); //new JApplicationWeb
 				 $body = $appWeb->getBody();
 	 			// Here I have the chance to pick up all leftover resources which never entered the JDocument Headers.

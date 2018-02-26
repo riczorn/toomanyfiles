@@ -64,7 +64,7 @@ class FixHead {
 						'localmini'=>$plugindir."/js/jquery-$jqversion.min.js",
 						'cdn'=>"//ajax.googleapis.com/ajax/libs/jquery/$jqversion/jquery.js",
 						'cdnmini'=>"//ajax.googleapis.com/ajax/libs/jquery/$jqversion/jquery.min.js",
-						'regexp'=>"\/jquery[0-9\.\-]*(.min)?\.js",
+						'regexp'=>"/jquery[0-9\.\-]*([\.-]min)?\.js",
 						'fallback'=>"window.jQuery || document.write('<sc'+'ript src=\"{LOCALPATH}\"><\/sc'+'ript>');",
 						'dependencies'=>"noconflict"			
 			),
