@@ -64,7 +64,7 @@ class FixHead {
 						'localmini'=>$plugindir."/js/jquery-$jqversion.min.js",
 						'cdn'=>"//ajax.googleapis.com/ajax/libs/jquery/$jqversion/jquery.js",
 						'cdnmini'=>"//ajax.googleapis.com/ajax/libs/jquery/$jqversion/jquery.min.js",
-						'regexp'=>"/jquery[0-9\.\-]*([\.-]min)?\.js",
+						'regexp'=>"jquery[0-9\.\-]*([\.-]min)?\.js",
 						'fallback'=>"window.jQuery || document.write('<sc'+'ript src=\"{LOCALPATH}\"><\/sc'+'ript>');",
 						'dependencies'=>"noconflict"			
 			),
@@ -158,7 +158,7 @@ class FixHead {
 			
 			foreach($container['scripts'] as $libpath=>$val) {
 				if  ( 
-						(!empty($lib['regexp']) && preg_match("ç".$lib['regexp']."ç", $libpath))
+						(!empty($lib['regexp']) && preg_match("/".$lib['regexp']."/", $libpath))
 						|| 
 						(empty($lib['regexp']) && 
 							((!empty($lib['localmini']) && strpos($libpath,$lib['localmini'])!==false)
@@ -581,7 +581,7 @@ class FixHead {
 		 * I know it's a conditional comment and ignore the line.
 		 * 
 		 * TODO: It may only match single-scripts. If a conditional comment includes
-		 * 			more than one line, it won't be matched.
+		 * 			more than one script, it won't be matched.
 		 */
 		$expressions = array(
 			// for conditional comments: we don't need to match them any longer
