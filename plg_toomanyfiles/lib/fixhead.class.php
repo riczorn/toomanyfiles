@@ -158,7 +158,7 @@ class FixHead {
 			
 			foreach($container['scripts'] as $libpath=>$val) {
 				if  ( 
-						(!empty($lib['regexp']) && preg_match("/".$lib['regexp']."/", $libpath))
+						(!empty($lib['regexp']) && preg_match("ç".$lib['regexp']."ç", $libpath))
 						|| 
 						(empty($lib['regexp']) && 
 							((!empty($lib['localmini']) && strpos($libpath,$lib['localmini'])!==false)
