@@ -139,4 +139,13 @@ Version 1.7.5 (2018-02-14)
 
 Version 1.8.0 (2018-02-15)
   * Tested against Joomla! 4.0.0-dev
-  
+
+Version 1.8.1 (2018-02-26)
+  * Fixed an error that prevented removal/deduplication 
+    of some jQuery flavours
+
+
+Version 1.8.2 (2018-03-03)
+  * Fixed another error that prevented removal/deduplication
+    of some jQuery flavours
+

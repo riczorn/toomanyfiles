@@ -33,6 +33,14 @@ require_once(dirname(__FILE__) . "/lib/fixhead.class.php");
  * This plugin has two events, 
  * onBeforeCompileHead, which is used for copying Joomla Head and emptying it (so nothing will be output)
  * onAfterRender, which finds extra scripts, does all the magic, and updates the body.
+ *
+ * Note: on 2018/03 as the new TechJoomla strapper came out 
+ *       /media/techjoomla_strapper/tjstrapper.php registering
+ * two events made it clear that we either register our own, 
+ * or end up before it; and indeed it does serious damage, so here:
+ * fix by copying.
+ * 
+ * I'll register onAfterRenderZZTooManyFiles instead to be last once again.
  */
 class plgSystemTooManyFiles extends JPlugin
 {
@@ -47,6 +55,9 @@ class plgSystemTooManyFiles extends JPlugin
 			if (!$this->fixHead);
 				$this->fixHead = new FixHead($this);
 			$this->fixHead->clearDocHead();
+
+			$afterRenderCall = array($this, 'onAfterRenderTooManyFiles');
+			JFactory::getApplication()->registerEvent('onAfterRender', $afterRenderCall);
 		}
 	}
 	
@@ -57,8 +68,10 @@ class plgSystemTooManyFiles extends JPlugin
 	 * to fill in the blanks.
 	 * Insert the footer scripts at the end of the document just before the </body>
 	 */
-	function onAfterRender() {
-		if ($this->isAllowed()) {
+	function onAfterRenderTooManyFiles () {
+		// testing isAllowed is no longer required here, 
+		// as this event is attached in the previous call onBeforeCompileHead() 
+		// if ($this->isAllowed()) {
 			if ($this->fixHead) {
 				 // J3:     $body = JResponse::getBody();
 				 // j4 fix: $body = JApplicationWeb::getBody();
@@ -82,7 +95,7 @@ class plgSystemTooManyFiles extends JPlugin
 				//JApplicationWeb::setBody($body);
 				$appWeb->setBody($body);
 			}
-		}
+		// }
 	}
 
 	/**
@@ -143,3 +156,6 @@ class plgSystemTooManyFiles extends JPlugin
 	    return true;
 	}
 }
+
+
+
