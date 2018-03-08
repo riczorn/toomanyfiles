@@ -55,18 +55,42 @@ class plgSystemTooManyFiles extends JPlugin
 			if (!$this->fixHead);
 				$this->fixHead = new FixHead($this);
 			$this->fixHead->clearDocHead();
-
-			$afterRenderCall = array($this, 'onAfterRenderTooManyFiles');
-			JFactory::getApplication()->registerEvent('onAfterRender', $afterRenderCall);
+			
+			if ($this->params->get('forceful_last')) {
+				$afterRenderCall = array($this, 'onAfterRenderTooManyFiles');
+				JFactory::getApplication()->registerEvent('onAfterRender', $afterRenderCall);
+			} else {
+				// nothing. the default onAfterRender is called.
+			}
 		}
 	}
 	
 	/**
 	 * This is the last event invoked where I can edit the page.
+	 * However, by enabling the option forceful_last, it is possible to 
+	 * use the event even later. So this only invokes the actual method
+	 * if such option is not set (it really makes no sense to fix it twice!)
+	 * 
+	 */
+	function onAfterRender () {
+		// no triple === as it could be a string
+		if ($this->params->get('forceful_last')==0) {
+			return $this->onAfterRenderTooManyFiles();
+		} else {
+			// no else: if forceful_last is enabled, the onAfterRenderTooManyFiles
+			// will automatically be invoked last.
+		}
+	}
+
+	/**
+	 * This can be invoked by either onAfterRender or the custom event registered
+	 * in onBeforeCompileHead.  
 	 * Since I have removed all scripts from the JDocument Head in the onBeforeCompileHead method,
 	 * I will now invoke my custom versions of renderHead and renderFoot (which only manage scripts and styles)
 	 * to fill in the blanks.
 	 * Insert the footer scripts at the end of the document just before the </body>
+	 *
+	 * @return void
 	 */
 	function onAfterRenderTooManyFiles () {
 		// testing isAllowed is no longer required here, 

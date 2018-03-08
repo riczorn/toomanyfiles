@@ -134,6 +134,15 @@
 				
 			</fieldset>
 			<fieldset name="advanced">
+				<field type="spacer" name="forceful"
+					label="PLG_2MANY_SEPARATOR_FORCEFUL_LAST_TITLE" />
+
+				<field name="forceful_last" type="list" default="0"
+					label="PLG_2MANY_FIELD_FORCEFUL_LAST_LABEL" description="PLG_2MANY_FIELD_FORCEFUL_LAST_DESC"
+					filter="integer">
+					<option value="0">PLG_2MANY_FIELD_FORCEFUL_LAST_NO</option>
+					<option value="1">PLG_2MANY_FIELD_FORCEFUL_LAST_YES</option>
+				</field>
 
 				<field type="spacer" name="compression"
 					label="PLG_2MANY_SEPARATOR_COMPRESSION_LABEL" />
