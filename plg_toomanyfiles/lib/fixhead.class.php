@@ -895,10 +895,13 @@ class FixHead {
 					$buffer .= ' media="' . $strAttr['media'] . '" ';
 				}
 				if (isset($strAttr['attribs'])) {
-    				if ($temp = ArrayHelper::toString($strAttr['attribs']))
-    				{
-    					$buffer .= ' ' . $temp;
-    				}
+					$arrayAttribs = $strAttr['attribs'];
+					if (is_array($arrayAttribs)) {
+						if ($temp = ArrayHelper::toString($arrayAttribs))
+						{
+							$buffer .= ' ' . $temp;
+						}
+					}
 				}
 				$buffer .= $tagEnd . $lnEnd;
 			}
