@@ -168,3 +168,7 @@ Version 1.9.0 (2018-03-08)
 	forcefully last (thus bypassing thug plugins)
 	or simply load normally in the onAfterRender
 
+Version 1.9.1 2018-04-05
+  * Update for J3.9, ArrayToHelper fails on bool, specifically 
+  	for scripts included with an incomplete 'attribs' field
+	  
