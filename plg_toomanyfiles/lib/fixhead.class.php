@@ -243,13 +243,13 @@ class FixHead {
 				}
 			}
 		}
-		
+		//$options = array('mime'=>'text/javascript', 'defer'=>$defer, 'async'=>$async);
 		$options = array('mime'=>'text/javascript');
 		if ($defer){ 
-			$options['defer']=$defer;
+		//	$options['defer']=$defer;
 		}
 		if ($async){ 
-			$options['async']=$async;
+		//	$options['async']=$async;
 		}
 		
 		if (!empty($fallback)) {
