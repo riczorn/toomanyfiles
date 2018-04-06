@@ -66,21 +66,21 @@ class FixHead {
 						'cdnmini'=>"//ajax.googleapis.com/ajax/libs/jquery/$jqversion/jquery.min.js",
 						'regexp'=>"jquery[0-9\.\-]*([\.-]min)?\.js",
 						'fallback'=>"window.jQuery || document.write('<sc'+'ript src=\"{LOCALPATH}\"><\/sc'+'ript>');",
-						//'dependencies'=>"noconflict"			
+						'dependencies'=>"noconflict",
 			),
 		"jquery_ui"=>array(
 			'local'=>$plugindir."/js/jquery-ui-$jquiversion.js",
 			'localmini'=>$plugindir."/js/jquery-ui-$jquiversion.min.js",
 			'cdn'=>"//ajax.googleapis.com/ajax/libs/jqueryui/$jquiversion/jquery-ui.js",
 			'cdnmini'=>"//ajax.googleapis.com/ajax/libs/jqueryui/$jquiversion/jquery-ui.min.js",
-			'regexp'=>"jquery-ui[0-9\.\-]*(custom)?(\.min)?\.js"
+			'regexp'=>"jquery-ui[0-9\.\-]*(custom)?(\.min)?\.js",
 		),
 		"jquery_migrate"=>array(
 			'local'=>$plugindir."/js/jquery-migrate-$jqmigversion.js",
 			'localmini'=>$plugindir."/js/jquery-migrate-$jqmigversion.min.js",
 			'cdn'=>"//code.jquery.com/jquery-migrate-$jqmigversion.js",
 			'cdnmini'=>"//code.jquery.com/jquery-migrate-$jqmigversion.min.js",
-			'regexp'=>"jquery-migrate[0-9\.\-]*(custom)?(\.min)?\.js"
+			'regexp'=>"jquery-migrate[0-9\.\-]*(custom)?(\.min)?\.js",
 		),
 		"noconflict"=>array(
 				'regexp'=>"jquery[-_\.]*noconflict([-_\.]min)?\.js",
@@ -97,7 +97,7 @@ class FixHead {
 		),
 		"core"=>array(
 			'local'=>"/media/system/js/core-uncompressed.js",
-			'localmini'=>"/media/system/js/core.js"
+			'localmini'=>"/media/system/js/core.js",
 		),
 		"jcaption"=>array(
 			'local'=>"/media/system/js/caption.js",
@@ -152,7 +152,7 @@ class FixHead {
 	 * and removeRegex which is a regular expression whose match will be deleted.
 	 * Regexprs are collected in $this->removeScriptRegexp and processed in fix()
 	 */
-	function removeLibrary(&$container, $scriptLibrary) {
+	function removeLibrary(&$container, $scriptLibrary, $withDependencies = false) {
 		if (isset($this->scriptLibraries[$scriptLibrary])) {
 			$lib = $this->scriptLibraries[$scriptLibrary];
 			
@@ -169,10 +169,10 @@ class FixHead {
 					unset ($container['scripts'][$libpath]);
 					
 					// this throws away core.js and caption.js mainly.
-					if (!empty($lib['dependencies'])) {
+					if ($withDependencies && !empty($lib['dependencies'])) {
 						$deps = explode(",",$lib['dependencies']);
 						foreach($deps as $dep) {
-							$this->removeLibrary($container, $dep);
+							$this->removeLibrary($container, $dep, false);
 						}
 					}
 				}
@@ -314,18 +314,18 @@ class FixHead {
 				case '0': break; // leave as is
 				case '-1': {
 					// remove it from $this->head;
-					$this->removeLibrary($this->head, $scriptLibrary);
+					$this->removeLibrary($this->head, $scriptLibrary, true);
 					break;
 				}
 				case '1': {
 					// enable it: hence remove it and add it at the top of $this->head or $this->foot as appropriate;
-					$this->removeLibrary($this->head,	$scriptLibrary);
+					$this->removeLibrary($this->head,	$scriptLibrary, false);
 					$this->addLibrary($this->head,	$scriptLibrary);
 					break;
 				}
 				default: {
 					// new in v.1.6: enable it but use the value of option!
-					$this->removeLibrary($this->head, $scriptLibrary);
+					$this->removeLibrary($this->head, $scriptLibrary, false);
 					// there are several cases for option: absolute path, cdn; 
 					// relative path is not expected and should not happen.
 					
@@ -370,11 +370,22 @@ class FixHead {
 	    // noconflict library is just an extra download for a one-line javascript;
 		// if needed, it will be re-added later 
 		// based on the "noConflict" options in the plugin configuration.
-		if ($this->params->get('script_jquery_noconflict') != 0) {
-			$this->removeLibrary($this->head, 'noconflict');
+
+		switch ($this->params->get('script_jquery_noconflict')) {
+			case '0': break; // leave as is
+			case '-1': {
+				// remove it from $this->head;
+				$this->removeLibrary($this->head, 'noconflict', true);
+				break;
+			}
+			case '1': {
+				$this->removeLibrary($this->head,	'noconflict', false);
+				//$this->addLibrary($this->head,	'noconflict');
+				break;
+			}
 		}
-	    
-	     
+
+		 
 	    if ($this->params->get('iskip')) { // skip iphone bar 
 	    	// hide bar on iPhone
 			// requires css: body{ min-height:960px; ...
