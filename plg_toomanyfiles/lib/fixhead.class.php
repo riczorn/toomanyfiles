@@ -706,9 +706,10 @@ class FixHead {
 	    	// but this is achieved by fix later on.
 	    	$this->addScripts($this->head,
 	    		$attrs['src'],
-	    		false,'',
-	    		$attrs['defer'],
-	    		$attrs['async']);
+	    		false,''
+	    		//@TODO REMOVE COMMENT2018 $attrs['defer'],
+				//@TODO REMOVE COMMENT2018 $attrs['async']
+			);
 	    	return $this->debugmode>0?"\n<!-- ".$attrs['src']." moved by fixHead -->":"";
 	    } else {
 	    	/* it's an inlined script: we want to make sure that document.write() kind of scripts stay where they are.
@@ -961,11 +962,11 @@ class FixHead {
 				}
 				if (isset($strAttr['defer']))
 				{
-					$buffer .= ' defer="defer"';
+					//@TODO REMOVE COMMENT2018$buffer .= ' defer="defer"';
 				}
 				if (isset($strAttr['async']))
 				{
-					$buffer .= ' async="async"';
+					//@TODO REMOVE COMMENT2018$buffer .= ' async="async"';
 				}
 				$buffer .= '></script>' . $lnEnd;
 				
