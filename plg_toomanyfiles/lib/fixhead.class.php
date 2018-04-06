@@ -244,7 +244,14 @@ class FixHead {
 			}
 		}
 		
-		$options = array('mime'=>'text/javascript', 'defer'=>$defer, 'async'=>$async);
+		$options = array('mime'=>'text/javascript');
+		if ($defer){ 
+			$options['defer']=$defer;
+		}
+		if ($async){ 
+			$options['async']=$async;
+		}
+		
 		if (!empty($fallback)) {
 			$options['fallback'] = $fallback;
 		}
@@ -318,7 +325,8 @@ class FixHead {
 					break;
 				}
 				case '1': {
-					// enable it: hence remove it and add it at the top of $this->head or $this->foot as appropriate;
+					// enable it: hence remove it (without dependencies) then
+					//  add it at the top of $this->head or $this->foot as appropriate;
 					$this->removeLibrary($this->head,	$scriptLibrary, false);
 					$this->addLibrary($this->head,	$scriptLibrary);
 					break;
