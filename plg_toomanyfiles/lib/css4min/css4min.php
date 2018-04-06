@@ -175,7 +175,9 @@ class Css4Min {
 		if ($isCss) {
 				$options = array('mime'=>'text/css', 'media'=>NULL, "attribs"=>array());
 			} else {
-				$options = array('mime'=>'text/javascript', 'defer'=>false, 'async'=>false);
+				//@TODO REMOVE COMMENT2018
+				//$options = array('mime'=>'text/javascript', 'defer'=>false, 'async'=>false);
+				$options = array('mime'=>'text/javascript');
 			}
 		$this->debug("Adding $file to $arraykey");
 		$this->files[$arraykey][$file]=$options;

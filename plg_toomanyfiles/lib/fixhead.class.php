@@ -246,10 +246,10 @@ class FixHead {
 		//$options = array('mime'=>'text/javascript', 'defer'=>$defer, 'async'=>$async);
 		$options = array('mime'=>'text/javascript');
 		if ($defer){ 
-		//	$options['defer']=$defer;
+		//@TODO REMOVE COMMENT2018	$options['defer']=$defer;
 		}
 		if ($async){ 
-		//	$options['async']=$async;
+		//@TODO REMOVE COMMENT2018	$options['async']=$async;
 		}
 		
 		if (!empty($fallback)) {
