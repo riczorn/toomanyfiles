@@ -66,6 +66,7 @@ class plgSystemTooManyFiles extends JPlugin
 	}
 	
 	/**
+	 * 
 	 * This is the last event invoked where I can edit the page.
 	 * However, by enabling the option forceful_last, it is possible to 
 	 * use the event even later. So this only invokes the actual method
@@ -74,7 +75,8 @@ class plgSystemTooManyFiles extends JPlugin
 	 */
 	function onAfterRender () {
 		// no triple === as it could be a string
-		if ($this->params->get('forceful_last')==0) {
+		if (($this->params->get('forceful_last')==0) && 
+			($this->isAllowed())) {
 			return $this->onAfterRenderTooManyFiles();
 		} else {
 			// no else: if forceful_last is enabled, the onAfterRenderTooManyFiles
@@ -97,15 +99,16 @@ class plgSystemTooManyFiles extends JPlugin
 		// as this event is attached in the previous call onBeforeCompileHead() 
 		// if ($this->isAllowed()) {
 			if ($this->fixHead) {
-				 // J3:     $body = JResponse::getBody();
-				 // j4 fix: $body = JApplicationWeb::getBody();
+				 // J3:       $body = JResponse::getBody();
+				 // J3.8, J4: $body = JApplicationWeb::getBody();
 				 $appWeb = JFactory::getApplication(); //new JApplicationWeb
 				 $body = $appWeb->getBody();
-	 			// Here I have the chance to pick up all leftover resources which never entered the JDocument Headers.
-	 			$this->fixHead->moveScripts($body);
+				 // Here I have the chance to pick up any leftover resources 
+				 // which never entered the JDocument Headers.
+	 			$this->fixHead->extractInlineScripts($body);
 	 			
-	 			// This loads all scripts and styles in each block (head/foot), joins, compresses and returns the 
-	 			// compressed urls
+				 // This loads all scripts and styles in each property (head/foot), 
+				 // joins, minifies and returns the compressed urls
 	 			$this->fixHead->fix();
 	 			
 				$find = array("</title>","</body>");
@@ -114,7 +117,7 @@ class plgSystemTooManyFiles extends JPlugin
 					$this->fixHead->renderFoot()."</body>"
 				);
 	 			
-				 $body = str_replace($find,$replace,$body);
+				 $body = str_ireplace($find,$replace,$body);
 				 
 				//JApplicationWeb::setBody($body);
 				$appWeb->setBody($body);

@@ -246,6 +246,7 @@ class FixHead {
 		//$options = array('mime'=>'text/javascript', 'defer'=>$defer, 'async'=>$async);
 		$options = array('mime'=>'text/javascript');
 		if ($defer){ 
+			// defer_libraries NEW OPTION!!! 2018-05
 		//@TODO REMOVE COMMENT2018	$options['defer']=$defer;
 		}
 		if ($async){ 
@@ -410,17 +411,26 @@ class FixHead {
 			 * googleAddAdSenseService
 			 * twitter widgets which do document.write
 			 */
-			$excluded_scripts = array(
+			/*$excluded_scripts = array(
 				'modernizr.js',
 				'lazyload.js',
 				'googleadservices',
 				'widgets.twimg.com'
 				);
+
+				superseded by configuration:
+					PLG_2MANY_FIELD_COMPRESS_HEAD_LIBRARIES_DEFAULT
+					contains a \n separated list of libraries				
+			*/
+			$excluded_scripts = explode("\n",$this->params->get('head_libraries',''));
+			
+
+				
 			
 			foreach($this->head['scripts'] as $key=>$value) {
 				$valid = true;
 				foreach($excluded_scripts as $excluded_script) {
-					if (strpos(strtolower($key),$excluded_script)!==false) {
+					if (!empty($excluded_script) && strpos(strtolower($key),$excluded_script)!==false) {
 						$valid = false;
 						break;
 					}
@@ -499,7 +509,7 @@ class FixHead {
 					$script =preg_replace($removeScripts,'',$script);
 					$this->head['script'][$key] = $script;
 				}
-			}
+			} 
 	    	$this->foot['script'] = $this->head['script'];
 	    	
 	    	$this->head['script']=array();
@@ -584,7 +594,7 @@ class FixHead {
 	 * $this->head and $this->foot.
 	 * @param unknown_type $body
 	 */
-	function moveScripts(&$body) {
+	function extractInlineScripts(&$body) {
 		/**
 		 * The lookahead negation of the conditional statements
 		 * (?!<!\[endif\]) does not prevent matching of the scripts later.
@@ -618,7 +628,7 @@ class FixHead {
 	
 	/** 
 	 * Generic Callback function from preg_replace_callback
-	 * @see moveScripts
+	 * @see extractInlineScripts
 	 * 
 	 * This will manage Internet Explorer conditional comments and - when appropriate - invoke 
 	 * the other two callbacks. 
@@ -626,7 +636,7 @@ class FixHead {
 	 * the awesome conditional comments. Now I'm past 4 hours in debugging.
 	 * 
 	 * @see moveStylesCallback
-	 * @see moveScriptsCallback
+	 * @see extractInlineScriptsCallback
 	 * 
 	 * @param $matches
 	 */
@@ -637,20 +647,20 @@ class FixHead {
 		$conditionalComment = $this->debugmode>0?"<!-- fixHead IE conditional comment: untouched style/script -->\n":"";
 
 		if (!empty($match1)) {
-			return $conditionalComment.$matches[0];
+			return $conditionalComment . $matches[0];
 		} // else, let's drop the empty comments match:
 		array_splice($matches, 1, 1);
 		
 		if (strpos(strtolower($match2),'link')) {
 			return $this->moveStylesCallback($matches);
 		} else if (strpos(strtolower($match2),'script')) {
-			return $this->moveScriptsCallback($matches);
+			return $this->extractInlineScriptsCallback($matches);
 		} else  {
 			/*
 			 *  this code block relates to an older set of regexpr that matched explicitly comments;
 			 * since it didn't prevent scripts from being matched twice,
 			 * it's been removed.  Left as a fallback to ensure we don't drop any code we don't handle
-			 * properly.
+			 * above.
 			 */
 			return $comment.$matches[0];
 		} 
@@ -695,20 +705,32 @@ class FixHead {
 	 * and: add to the right header + delete the script (or replace it with a comment)
 	 * @param $matches
 	 */
-	function moveScriptsCallback($matches){
-		$attrs = array('src'=>'','type'=>'','defer'=>'','async'=>'');$attr_matches = array();
+	function extractInlineScriptsCallback($matches){
+		// defer e async vengono aggiunti se presenti, anche se la stringa è 
+		// vuota. Per ora // COMMENT2018 è commentato,
+		// ma forse è più corretto inizializzare con:
+		$attrs = array();
+		// visto che così vengono popolati solo i match passati.
+			
+		$attrs = array('src'=>'','type'=>'','defer'=>'','async'=>'');
+		$attr_matches = array();
 	    preg_match_all('/(src|type|defer|async)=[\'"](.*?)[\'"]/i',$matches[2],$attr_matches);
 	    foreach($attr_matches[1] as $key=>$attr_name) {
 	    	$attrs[$attr_name]=$attr_matches[2][$key];
 	    }
 	    if ($attrs['src']) { 
 	    	// this is a linked library: we'll want to exclude only certain scripts from google, 
-	    	// but this is achieved by fix later on.
+			// but this is achieved by fix later on.
+			// defer and async may be added based on the configuration 
+			// option defer_libaries (which acts later on in fix)
+			$defer = strcasecmp($attrs['defer'],'defer')===0 || strcasecmp($attrs['defer'],'true')===0;
+			$async = strcasecmp($attrs['async'], 'async')===0 || strcasecmp($attrs['async'],'true')===0;
 	    	$this->addScripts($this->head,
 	    		$attrs['src'],
-	    		false,''
-	    		//@TODO REMOVE COMMENT2018 $attrs['defer'],
-				//@TODO REMOVE COMMENT2018 $attrs['async']
+				false,
+				'',
+				$defer,
+				$async
 			);
 	    	return $this->debugmode>0?"\n<!-- ".$attrs['src']." moved by fixHead -->":"";
 	    } else {
@@ -737,7 +759,8 @@ class FixHead {
 		    			'SobiProUrl',
 		    			'SPLiveSite',
 			    	
-			    	);
+					);
+					
 			    	foreach ($exclusions as $exclusion) {
 			    		$exclusion = trim($exclusion);
 			    		if (!empty($exclusion)) {
@@ -748,8 +771,22 @@ class FixHead {
 			    		}
 			    	}
 					
+					/* 
+					 * Did I configure it to exclude this script? in case, leave it there!
+					 * Note: scripts may already be in the head, in such case they 
+					 * will be handled by fix()
+					 */
+					$exclude_scripts = $this->params->get('exclude_scripts');
+					foreach(explode("\n",$exclude_scripts) as $key=>$regexp) {
+						if (preg_match($regexp, $script)) {
+							$comment = $this->debugmode>0?"// fixHead notice: the next script matches the forbidden regexp \"$regexp\" and was not moved\n":"";
+							return $comment.$matches[0];													
+						}
+					}
+					
 		    		$this->addScript($this->head,$script);
-		    		return  $this->debugmode>0?"<!-- inlined script moved by fixHead -->":"";
+					return  $this->debugmode>0?"<!-- inlined script moved by fixHead -->":"";
+					
 		    	} else {
 		    		$comment = $this->debugmode>0?"<!-- fixHead ERROR: the next script appears to be empty -->\n":"";
 		    		return $comment.$matches[0];
@@ -807,7 +844,7 @@ class FixHead {
 	}
 	
 	/**
-	 * This is invoked by moveScripts to compress directly.
+	 * This is invoked by extractInlineScripts to compress directly.
 	 * @param $script  The javascript instructions
 	 */
 	function removeComments(&$script) {
@@ -875,14 +912,14 @@ class FixHead {
 	 * Invoke renderTags
 	 */
 	function renderHead() {
-		return $this->renderTags($this->head, 'render head');
+		return $this->renderTags($this->head, true);
 	}
 	
 	/**
 	 * Invoke renderTags
 	 */
 	function renderFoot() {
-		return $this->renderTags($this->foot, 'render foot');
+		return $this->renderTags($this->foot, false);
 	}
 	
 	/**
@@ -891,8 +928,13 @@ class FixHead {
 	 * Taken from and mostly identical to libraries/joomla/document/html/renderer/head.php : fetchHead(
 	 * See inline comments in section 'scripts' near 'fallback' for the one change I made.
 	 * */
-	function renderTags(&$container, $message) {
-		if ($message) {
+	function renderTags(&$container, $isHead) {
+		if ($isHead) {
+			$message = 'render head';
+		} else {
+			$message = 'render foot';
+		}
+		if ($message) { //debug
 			$this->dump($message,$this->head);
 		}
 		$lnEnd = $this->document->_getLineEnd();
@@ -950,6 +992,24 @@ class FixHead {
 			}
 		}
 		
+		// determine if we should defer the script.
+		// besides the actual script content, the configuration option
+		// defer_libraries determines extra exclusions:
+		// - -1 (DISABLE): do not change DEFER and ASYNC
+		// - 0 (NONE): no libs are deferred;
+		// - 1 (FOOT): only libs in the foot are deferred;
+		// - 2 (ALL) : all libs are deferred
+		$defer_libs = $this->params->get("defer_libraries",0);
+		switch ($defer_libs) {
+			case -1:
+				break;
+			case 0:
+				$shouldDefer = false;
+				break;
+			default:
+				$shouldDefer = $defer_libs==2 || !$isHead;
+		}
+		
 		
 		// Generate script file links
 		if (isset($container['scripts'])) {
@@ -960,13 +1020,21 @@ class FixHead {
 				{
 					$buffer .= ' type="' . $strAttr['mime'] . '"';
 				}
-				if (isset($strAttr['defer']))
+				if (
+					($defer_libs==-1 && isset($strAttr['defer']))
+					|| $shouldDefer
+					)
 				{
-					//@TODO REMOVE COMMENT2018$buffer .= ' defer="defer"';
+					//@TODO REMOVE COMMENT2018
+					$buffer .= ' defer="defer"';
 				}
-				if (isset($strAttr['async']))
+				if (
+					($defer_libs==-1 && isset($strAttr['async']))
+					|| $shouldDefer
+					)
 				{
-					//@TODO REMOVE COMMENT2018$buffer .= ' async="async"';
+					//@TODO REMOVE COMMENT2018
+					$buffer .= ' async="async"';
 				}
 				$buffer .= '></script>' . $lnEnd;
 				

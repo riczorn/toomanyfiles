@@ -171,4 +171,15 @@ Version 1.9.0 (2018-03-08)
 Version 1.9.1 2018-04-05
   * Update for J3.9, ArrayToHelper fails on bool, specifically 
   	for scripts included with an incomplete 'attribs' field
-	  
+  * forced un-defer e un-async on all libraries, now it should 
+    be possible to choose which to defer/async and which not to.
+	
+Version 1.9.2 2018-05-15
+  * added params:
+	- Exclude script regexp: to exclude regexp script fragments from moving to the bottom.
+	- Keep libs in head: allows to list some libs that should not be moved to the foot of the doc
+	- DEFER-ASYNC: ignore, remove, force defer-async attributes
+
+
+Coming Next:
+  * defer-async can be forced in config

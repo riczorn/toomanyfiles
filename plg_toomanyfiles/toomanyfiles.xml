@@ -12,8 +12,8 @@
 	<files>
 		<filename plugin="toomanyfiles">toomanyfiles.php</filename>
 		<filename>index.html</filename>
-		<filename>README.php</filename>
 		<filename>license.txt</filename>
+		<filename>README.php</filename>
 		<folder>elements</folder>
 		<folder>images</folder>
 		<folder>js</folder>
@@ -247,7 +247,26 @@
 
 				<field name="exclude_files" type="textarea" default=""
 					label="PLG_2MANY_FIELD_COMPRESS_EXCLUDE_FILES_LABEL" description="PLG_2MANY_FIELD_COMPRESS_EXCLUDE_FILES_DESC"
-					rows="4" cols="40" />
+					rows="4" cols="80" />
+
+
+				<field name="head_libraries" type="textarea" default="modernizr.js&#13;&#10;lazyload.js&#13;&#10;googleadservices&#13;&#10;widgets.twimg.com"
+					label="PLG_2MANY_FIELD_COMPRESS_HEAD_LIBRARIES_LABEL" description="PLG_2MANY_FIELD_COMPRESS_HEAD_LIBRARIES_DESC"
+					rows="5" cols="80" />			
+
+				<field name="defer_libraries" type="list" default="1"
+					label="PLG_2MANY_FIELD_COMPRESS_DEFER_LIBRARIES_LABEL" description="PLG_2MANY_FIELD_COMPRESS_DEFER_LIBRARIES_DESC"
+					filter="integer">
+					<option value="-1">PLG_2MANY_FIELD_COMPRESS_DEFER_LIBRARIES__DISABLED</option>
+					<option value="0">PLG_2MANY_FIELD_COMPRESS_DEFER_LIBRARIES__NONE</option>
+					<option value="1">PLG_2MANY_FIELD_COMPRESS_DEFER_LIBRARIES__FOOT</option>
+					<option value="2">PLG_2MANY_FIELD_COMPRESS_DEFER_LIBRARIES__ALL</option>
+				</field>
+
+				<field name="top_scripts" type="textarea" default="var gdprConfigurationOptions[^}]*};&#13;&#10;"
+					label="PLG_2MANY_FIELD_COMPRESS_TOP_SCRIPTS_LABEL" description="PLG_2MANY_FIELD_COMPRESS_TOP_SCRIPTS_DESC"
+					rows="5" cols="80" />							
+				
 
 				<field name="use_pro" type="list" default="0"
 					label="PLG_2MANY_FIELD_USE_PRO_CONFIG"
