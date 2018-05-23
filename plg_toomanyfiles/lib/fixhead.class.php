@@ -999,6 +999,7 @@ class FixHead {
 		// - 0 (NONE): no libs are deferred;
 		// - 1 (FOOT): only libs in the foot are deferred;
 		// - 2 (ALL) : all libs are deferred
+		$shouldDefer = true;
 		$defer_libs = $this->params->get("defer_libraries",0);
 		switch ($defer_libs) {
 			case -1:
@@ -1008,6 +1009,17 @@ class FixHead {
 				break;
 			default:
 				$shouldDefer = $defer_libs==2 || !$isHead;
+		}
+		$shouldAsync = true;
+		$async_libs = $this->params->get("async_libraries",0);
+		switch ($async_libs) {
+			case -1:
+				break;
+			case 0:
+				$shouldAsync = false;
+				break;
+			default:
+				$shouldAsync = $async_libs==2 || !$isHead;
 		}
 		
 		
@@ -1029,8 +1041,8 @@ class FixHead {
 					$buffer .= ' defer="defer"';
 				}
 				if (
-					($defer_libs==-1 && isset($strAttr['async']))
-					|| $shouldDefer
+					($async_libs==-1 && isset($strAttr['async']))
+					|| $shouldAsync
 					)
 				{
 					//@TODO REMOVE COMMENT2018
