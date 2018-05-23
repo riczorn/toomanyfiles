@@ -84,7 +84,7 @@ class FixHead {
 		),
 		"noconflict"=>array(
 				'regexp'=>"jquery[-_\.]*noconflict([-_\.]min)?\.js",
-				'removeRegex'=>'%[>\n;][^;\n]*jQuery.noConflict[^<;\n]*[<;\n]%',
+				'removeRegex'=>'%[>\n;][^=;\n]*jQuery.noConflict[^<;\n]*[<;\n]%',
 		),
 		"mootools_core"=>array(
 			'local'=>"/media/system/js/mootools-core-uncompressed.js",
