@@ -141,45 +141,15 @@ Version 1.8.0 (2018-02-15)
   * Tested against Joomla! 4.0.0-dev
 
 Version 1.8.1 (2018-02-26)
-  * Fixed an error that prevented removal/deduplication 
-    of some jQuery flavours
-
-
+  * Fixed an error that prevented removal/deduplication of some jQuery flavours
+  
 Version 1.8.2 (2018-03-03)
-  * Fixed another error that prevented removal/deduplication
-    of some jQuery flavours
+  * Fixed another error that prevented removal/deduplication of some jQuery flavours
 
 Version 1.9.0 (2018-03-08)
-  * Fixed compatibility issues with other optimization plugins.
-    This was due to the Joomla event system order.
-	In short, any plugins that aim at changing the page after it's 
-	being generated, hook the onAfterRender() event in a system plugin.
-	The order of the plugins in the backend - which the webmaster can 
-	easily change - determines who gets a first go at it.
 
-	Now TechJoomla (and we imagine others) have implemented their code
-	in a slightly different fashion, registering the system plugins 
-	only as a placeholder, and attaching other events from external files.
-	Well, any events attached like this end up last, 
-	in such a way that cache and other plugins becomes useless,
-	and of course they can't be sorted.
-
-	Hence a new configuration parameter was added to allow loading 
-	forcefully last (thus bypassing thug plugins)
-	or simply load normally in the onAfterRender
-
-Version 1.9.1 2018-04-05
-  * Update for J3.9, ArrayToHelper fails on bool, specifically 
-  	for scripts included with an incomplete 'attribs' field
-  * forced un-defer e un-async on all libraries, now it should 
-    be possible to choose which to defer/async and which not to.
-	
-Version 1.9.2 2018-05-15
-  * added params:
-	- Exclude script regexp: to exclude regexp script fragments from moving to the bottom.
-	- Keep libs in head: allows to list some libs that should not be moved to the foot of the doc
-	- DEFER-ASYNC: ignore, remove, force defer-async attributes
+Version 1.9.1 (2018-05-23)
 
 
-Coming Next:
-  * defer-async can be forced in config
+Version 1.9.2 (2020-03-08)
+  * Added "Remove files" and "Add markup" configuration options

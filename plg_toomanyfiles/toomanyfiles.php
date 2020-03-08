@@ -33,14 +33,6 @@ require_once(dirname(__FILE__) . "/lib/fixhead.class.php");
  * This plugin has two events, 
  * onBeforeCompileHead, which is used for copying Joomla Head and emptying it (so nothing will be output)
  * onAfterRender, which finds extra scripts, does all the magic, and updates the body.
- *
- * Note: on 2018/03 as the new TechJoomla strapper came out 
- *       /media/techjoomla_strapper/tjstrapper.php registering
- * two events made it clear that we either register our own, 
- * or end up before it; and indeed it does serious damage, so here:
- * fix by copying.
- * 
- * I'll register onAfterRenderZZTooManyFiles instead to be last once again.
  */
 class plgSystemTooManyFiles extends JPlugin
 {
@@ -55,60 +47,28 @@ class plgSystemTooManyFiles extends JPlugin
 			if (!$this->fixHead);
 				$this->fixHead = new FixHead($this);
 			$this->fixHead->clearDocHead();
-			
-			if ($this->params->get('forceful_last')) {
-				$afterRenderCall = array($this, 'onAfterRenderTooManyFiles');
-				JFactory::getApplication()->registerEvent('onAfterRender', $afterRenderCall);
-			} else {
-				// nothing. the default onAfterRender is called.
-			}
 		}
 	}
 	
 	/**
-	 * 
 	 * This is the last event invoked where I can edit the page.
-	 * However, by enabling the option forceful_last, it is possible to 
-	 * use the event even later. So this only invokes the actual method
-	 * if such option is not set (it really makes no sense to fix it twice!)
-	 * 
-	 */
-	function onAfterRender () {
-		// no triple === as it could be a string
-		if (($this->params->get('forceful_last')==0) && 
-			($this->isAllowed())) {
-			return $this->onAfterRenderTooManyFiles();
-		} else {
-			// no else: if forceful_last is enabled, the onAfterRenderTooManyFiles
-			// will automatically be invoked last.
-		}
-	}
-
-	/**
-	 * This can be invoked by either onAfterRender or the custom event registered
-	 * in onBeforeCompileHead.  
 	 * Since I have removed all scripts from the JDocument Head in the onBeforeCompileHead method,
 	 * I will now invoke my custom versions of renderHead and renderFoot (which only manage scripts and styles)
 	 * to fill in the blanks.
 	 * Insert the footer scripts at the end of the document just before the </body>
-	 *
-	 * @return void
 	 */
-	function onAfterRenderTooManyFiles () {
-		// testing isAllowed is no longer required here, 
-		// as this event is attached in the previous call onBeforeCompileHead() 
-		// if ($this->isAllowed()) {
+	function onAfterRender() {
+		if ($this->isAllowed()) {
 			if ($this->fixHead) {
-				 // J3:       $body = JResponse::getBody();
-				 // J3.8, J4: $body = JApplicationWeb::getBody();
+				 // J3:     $body = JResponse::getBody();
+				 // j4 fix: $body = JApplicationWeb::getBody();
 				 $appWeb = JFactory::getApplication(); //new JApplicationWeb
 				 $body = $appWeb->getBody();
-				 // Here I have the chance to pick up any leftover resources 
-				 // which never entered the JDocument Headers.
-	 			$this->fixHead->extractInlineScripts($body);
+	 			// Here I have the chance to pick up all leftover resources which never entered the JDocument Headers.
+	 			$this->fixHead->moveScripts($body);
 	 			
-				 // This loads all scripts and styles in each property (head/foot), 
-				 // joins, minifies and returns the compressed urls
+	 			// This loads all scripts and styles in each block (head/foot), joins, compresses and returns the 
+	 			// compressed urls
 	 			$this->fixHead->fix();
 	 			
 				$find = array("</title>","</body>");
@@ -117,12 +77,12 @@ class plgSystemTooManyFiles extends JPlugin
 					$this->fixHead->renderFoot()."</body>"
 				);
 	 			
-				 $body = str_ireplace($find,$replace,$body);
+				 $body = str_replace($find,$replace,$body);
 				 
 				//JApplicationWeb::setBody($body);
 				$appWeb->setBody($body);
 			}
-		// }
+		}
 	}
 
 	/**
@@ -183,6 +143,3 @@ class plgSystemTooManyFiles extends JPlugin
 	    return true;
 	}
 }
-
-
-
