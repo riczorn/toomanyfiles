@@ -388,7 +388,7 @@ class FixHead {
 				foreach($this->head['scripts'] as $key=>$value) {
 					$doRemove = false;
 					foreach($removeFiles as $removeFile) {
-						if (strpos(strtolower($key),$removeFile)!==false) {
+						if (!empty($removeFile) && (strpos(strtolower($key),strtolower($removeFile))!==false)) {
 							$doRemove = true;
 							break;
 						}
