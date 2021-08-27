@@ -3,14 +3,14 @@
  * @package     Too Many Files plugin
  * @copyright   Copyright (C) 2012-2014 Riccardo Zorn. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
- * @author      Riccardo Zorn <support@tmg.it> - http://www.fasterjoomla.com/too-many-files-optimize-your-site-js-and-css
+ * @author      Riccardo Zorn <support@tmg.it> - https://www.fasterjoomla.com/too-many-files-optimize-your-site-js-and-css
  */
 defined('_JEXEC') or die;
 die();
 ?>
 
 Too Many Files - Plugin for Joomla Admin
-Homepage: http://www.fasterjoomla.com/
+Homepage: https://www.fasterjoomla.com/
 
 --------------------------------------
 Version 1.1.6 (2013/04/28) alpha

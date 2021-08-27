@@ -5,7 +5,7 @@
  *
  * @package toomanyfiles.css4min
  * @author Riccardo Zorn support@fasterjoomla.com
- * @copyright (C) 2012 - 2014 http://www.fasterjoomla.com
+ * @copyright (C) 2012 - 2014 https://www.fasterjoomla.com
  * @license GNU/GPL v2 or greater http://www.gnu.org/licenses/gpl-2.0.html
  *
  * This class has the purpose of reducing the number of requests a webpage makes.

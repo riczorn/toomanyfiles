@@ -7,7 +7,7 @@
 	<license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>
 	<authorEmail>support@fasterjoomla.com</authorEmail>
 	<authorUrl>www.fasterjoomla.com</authorUrl>
-	<version>1.9.2</version>
+	<version>1.9.3</version>
 	<description>PLG_SYSTEM_TOOMANYFILES_XML_DESCRIPTION</description>
 	<files>
 		<filename plugin="toomanyfiles">toomanyfiles.php</filename>
@@ -267,6 +267,6 @@
 	</config>
 	<updateservers>
 		<!-- Note: No spaces or linebreaks allowed between the server tags -->
-		<server type="extension" priority="1" name="TooManyFiles Update Site">http://www.fasterjoomla.com/index.php?option=com_ars&amp;view=update&amp;task=stream&amp;format=xml&amp;id=1&amp;dummy=toomanyfiles.xml</server>
+		<server type="extension" priority="1" name="TooManyFiles Update Site">https://www.fasterjoomla.com/index.php?option=com_ars&amp;view=update&amp;task=stream&amp;format=xml&amp;id=1&amp;dummy=toomanyfiles.xml</server>
 	</updateservers>
 </extension>

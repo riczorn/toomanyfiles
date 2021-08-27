@@ -3,7 +3,7 @@
  * @package     FasterJoomla Admin components
  *
  * @author Riccardo Zorn support@fasterjoomla.com
- * @copyright (C) 2012 - 2014 http://www.fasterjoomla.com
+ * @copyright (C) 2012 - 2014 https://www.fasterjoomla.com
  * @license GNU/GPL v2 or greater http://www.gnu.org/licenses/gpl-2.0.html
  */
 
@@ -23,7 +23,7 @@ class JFormFieldZzinfo extends JFormField
 		$body = !empty($this->element['body'])?$this->element['body']:'';
 		$footer = !empty($this->element['footer'])?$this->element['footer']:'';
 		
-		$logoURL = !empty($this->element['logo'])?$this->element['logo']:'http://www.fasterjoomla.com/images/extensions/logoj5b.png';
+		$logoURL = !empty($this->element['logo'])?$this->element['logo']:'https://www.fasterjoomla.com/images/extensions/logoj5b.png';
 		
 		if (strpos($logoURL,"//")===false)
 			$logoURL = "/".trim(ltrim($logoURL,"/")," " ); 
@@ -72,7 +72,7 @@ class JFormFieldZzinfo extends JFormField
 				<h3>$title</h3>
 				<div class='header'>$header</div>
 				<div class='body'>$body</div> 
-				<div class='footer'>Copyright (c) 2012-2014 <a href='http://www.fasterjoomla.com' target='_blank'>fasterjoomla.com</a> $footer</div> 
+				<div class='footer'>Copyright (c) 2012-2014 <a href='https://www.fasterjoomla.com' target='_blank'>fasterjoomla.com</a> $footer</div> 
 			</div>";
 	}
 }
